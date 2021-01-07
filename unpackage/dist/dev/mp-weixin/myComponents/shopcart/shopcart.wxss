@@ -207,7 +207,7 @@
   bottom: 15px;
   left: 18px;
   z-index: 101;
-  background-color: #46494b;
+  background-color: #FFFFFF;
   -webkit-border-radius: 50%;
           border-radius: 50%;
   height: 55px;

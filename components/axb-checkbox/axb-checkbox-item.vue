@@ -90,7 +90,9 @@ const debounce = function (fun, delay, immediate) {
 		border-radius: 10upx;
 		font-size: 26upx;
 		box-sizing: border-box;
-		border: 1px solid #c3c3c3;
+		margin-left: 5px;
+		margin-right: 5px;
+		/* border: 1px solid #c3c3c3; */
 	}
 
 	.radio:not(:last-child) {

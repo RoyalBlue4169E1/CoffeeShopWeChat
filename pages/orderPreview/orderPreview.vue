@@ -1,79 +1,79 @@
 <template>
 	<view>
-		
+
 		<view class="header">
 			<view class="orderType">
 				<view v-if="order.type" class="addressControl" @click="changeAddress">
 					<view class="addressText">
-						待获取店铺名称
+						{{shopInfo.dgutshop_shop_name}}
 					</view>
-						<!-- <uni-icons class="icon" style="border-radius: 100%;" type="arrowright" color="#7c7c7c"></uni-icons> -->
-						<!-- 有分店的话可以更改店铺 -->
+					<!-- <uni-icons class="icon" style="border-radius: 100%;" type="arrowright" color="#7c7c7c"></uni-icons> -->
+					<!-- 有分店的话可以更改店铺 -->
 				</view>
-				
+
 				<view v-if="!order.type" class="addressControl" @click="changeAddress">
 					<view class="addressText">
 						{{getAddressText}}
 					</view>
-						<uni-icons class="icon" style="border-radius: 100%;" type="arrowright" color="#7c7c7c"></uni-icons>
+					<uni-icons class="icon" style="border-radius: 100%;" type="arrowright" color="#7c7c7c"></uni-icons>
 				</view>
-				
+
 				<view class="select">
-					<view :class="[order.type == 1 ? 'on' : 'off']"  @click="changePeisongType">自取</view>
-					<view :class="[order.type == 0 ? 'on' : 'off']"  @click="changePeisongType">外卖</view>
+					<view :class="[order.type == 1 ? 'on' : 'off']" @click="changePeisongType">自取</view>
+					<view :class="[order.type == 0 ? 'on' : 'off']" @click="changePeisongType">外卖</view>
 				</view>
-				
+
 			</view>
-			
+
 			<view class="nameAndPhone">
 				{{getNameAndPhone}}
 			</view>
-			
+
 		</view>
-		
-		
+
+
 		<view class="orderDetail">
-			<view class="itemList" v-for="(item,index) in order.orderItemList">
+			<view class="itemList" v-for="(item,index) in order.orderItemList":key='index'>
 				<view class="item">
-					<image :src="item.product_picture" mode="aspectFit"></image>
+					<image :src="item.product.picture" mode="aspectFit"></image>
 					<view class="message">
 						<view class="name">
-							{{item.product_name}}
+							{{item.product.name}}
 						</view>
 						<view class="describe">
 							{{item.note}}
 						</view>
 					</view>
-					
+
 					<view class="priceAndNum">
 						<view class="price">
-							￥ {{item.product_actual_price}}
+							￥ {{item.productActualPrice}}
 						</view>
 						<view class="num">
-							x {{item.count}}
+							x {{item.sum}}
 						</view>
 					</view>
-					
+
 				</view>
 			</view>
-			
+
 			<view class="mark">
 				<view class="text">
 					备注
 				</view>
-					<input class="input" placeholder="可输入口味包装等要求" placeholder-class="input-holder"/>
+				<input class="input" placeholder="可输入口味包装等要求" placeholder-class="input-holder" v-model="order.message" />
 			</view>
-			
+
 			<view class="totalText">
 				共计{{getAllCount}}件商品，小计
 				<view class="total-price">
 					￥{{getOrderTotalPrice}}
 				</view>
 			</view>
-			
+
 		</view>
-		
-		
+
+
 		<view class="bottom">
 			<view class="total-price">
 				合计
@@ -86,98 +86,199 @@
 				</view>
 			</view>
 		</view>
-		
-		
+
+
 	</view>
 </template>
 
 <script>
+	import common from "../../common/util.js"
 	export default {
 		data() {
 			return {
-				order:{},
+				order: {},
+				shopInfo: {},
+				isSelectAddress:false
 			}
 		},
 		methods: {
-			changePeisongType(){
+			changePeisongType() {
 				//修改订单派送类型
 				this.order.type = this.order.type == 0 ? 1 : 0;
-				if(this.order.type){
+				if (this.order.type) {
 					this.addAddressInOrder()
-				}else{
-					this.order.consignee=''
-					this.order.consignee_phone=''
-					this.order.consignee_address=''
-					this.order.consignee_room=''
+				} else {
+					this.order.consignee = ''
+					this.order.consigneePhone = ''
+					this.order.consigneeAddress = ''
+					this.order.consigneeRoom = ''
 				}
 			},
-			changeAddress(){
+			changeAddress() {
 				//跳转到选择地址
-				uni.setStorageSync('settle_order',this.order)
+				uni.setStorageSync('settle_order', this.order)
 				uni.navigateTo({
-					url:'../selectAddress/selectAddress'
+					url: '../selectAddress/selectAddress'
 				})
 			},
-			addAddressInOrder(address){
-				if(address==null){
-					address=uni.getStorageSync('defaultAddress')
-					if(address==null) return
+			addAddressInOrder(address) {
+				if (address == null) {
+					address = uni.getStorageSync('defaultAddress')
+					if (address == null) return
+				} else {
+					this.order.consignee = address.userName
+					this.order.consigneePhone = address.userPhone
+					this.order.consigneeAddress = address.userAddress
+					this.order.consigneeRoom = address.userRoom
 				}
-				this.order.consignee=address.user_name
-				this.order.consignee_phone=address.user_phone
-				this.order.consignee_address=address.user_address
-				this.order.consignee_room=address.user_room
+
 			},
+			settle() {
+				if(this.order.type=='0'&&!this.order.consigneeAddress){
+					uni.showToast({
+						icon:"none",
+						title:"请选择地址"
+					})
+					return
+				}
+				let that=this
+				let token = uni.getStorageSync("token")
+				if (token == null) {
+					console.log("token null")
+					if (!common.doLogin()) {
+						return
+					}
+				}
+				this.order.userId = 1
+				console.log("token:", token)
+				console.log(this.order)
+				uni.request({
+					url: this.$apiUrl + '/wechat/order/submit',
+					method: "POST",
+					data: this.order,
+					header: {
+						"Authorization": token
+					},
+					success: function(submutRes) {
+						if(submutRes.statusCode!=200){
+							console.log(submutRes)
+							uni.showToast({
+								title: '下单失败，请重试',
+								icon:'none'
+							});
+							return
+						}
+						
+						uni.showModal({
+							title: '模拟支付',
+							content: '点击确认模拟支付',
+							success: function(res) {
+								if (res.confirm) {
+									uni.request({
+										url: that.$apiUrl + '/wechat/order/h5pay',
+										method: 'POST',
+										header: {
+											"Authorization": token
+										},
+										data: {
+											orderId: submutRes.data.data.orderId
+										},
+										success: (payRes) => {
+											console.log(payRes, 'payRes')
+										},
+									});
+
+								} else if (res.cancel) {
+
+								}
+								
+								setTimeout(function() {
+										uni.switchTab({ 
+											url: '/pages/order/order'
+										})
+									},
+									1000
+								)
+							}
+						});
+
+
+					},
+					fail(e) {
+						console.log(e)
+						uni.showToast({
+							title: '下单失败，请重试',
+						});
+					}
+				})
+			}
 		},
 		onShow() {
-			this.order=uni.getStorageSync('settle_order')
-			let selectedAddress=uni.getStorageSync('selectedAddress')
-			if(selectedAddress!=null){
+			console.log('onshow')
+			this.order = uni.getStorageSync('settle_order')
+			let selectedAddress = uni.getStorageSync('selectedAddress')
+			console.log(selectedAddress, 'selectedAddress')
+			if (selectedAddress != null) {
 				this.addAddressInOrder(selectedAddress)
-			}else{
+			} else {
 				this.addAddressInOrder(uni.getStorageSync('defaultAddress'))
+				uni.request({
+					url: this.$apiUrl + '/wechat/address/list',
+					method: 'GET',
+					header: {
+						"Authorization": token
+					},
+					success: (res) => {
+						for(let i=0;i<res.data.data.list.length;i++){
+							if(res.data.data.list[i].isDefault=='1') this.addAddressInOrder(res.data.data.list[i])
+						}
+					}
+				})
 			}
+
+
+			this.shopInfo = uni.getStorageSync('shopInfo')
 		},
 		computed: {
 			// 获得购物车所有商品数量
 			getAllCount() {
-				let res=0
-				for(let i=0;i<this.order.orderItemList.length;i++){
-					res+=this.order.orderItemList[i].count
+				let res = 0
+				for (let i = 0; i < this.order.orderItemList.length; i++) {
+					res += this.order.orderItemList[i].sum
 				}
 				return res
 			},
-			getOrderTotalPrice(){
-				return this.order.order_price
+			getOrderTotalPrice() {
+				return this.order.orderPrice
 			},
-			getAddressText(){
-				if(this.order.consignee_address!=''){
-					return this.order.consignee_address+this.order.consignee_room	
-				}else{
+			getAddressText() {
+				if (this.order.consigneeAddress) {
+					return this.order.consigneeAddress + this.order.consigneeRoom
+				} else {
 					return '点击选择收货地址'
 				}
 			},
-			getNameAndPhone(){
-				if(this.order.type){
-					return this.order.consignee+''+this.order.consignee_phone	
-				}else{
-					//TODO:需要获取用户信息
-					return 'llk 18925542915'
+			getNameAndPhone() {
+				if (this.order.type) {
+					return ''
+				}else if(this.order.consignee){
+					return this.order.consignee + '' + this.order.consigneePhone
 				}
 				
+				return ""
+				
 			}
-		
+
 		},
 	}
 </script>
 
 <style lang="scss">
-	
-	page{
+	page {
 		background-color: #F7F7F7;
 	}
-	
-	.header{
+
+	.header {
 		padding-left: 20px;
 		padding-right: 20px;
 		padding-top: 25px;
@@ -186,20 +287,22 @@
 		flex-direction: column;
 		background-color: #FFFFFF;
 		margin-bottom: 10px;
-		
-		
-		.orderType{
+
+
+		.orderType {
 			display: flex;
 			flex-direction: row;
 			justify-content: space-between;
 			width: 100%;
-			.addressControl{
+
+			.addressControl {
 				width: 70%;
 				display: flex;
 				flex-direction: row;
 				justify-content: flex-start;
 				align-items: center;
-				.addressText{
+
+				.addressText {
 					font-size: 20px;
 					font-weight: 500;
 					color: #000000;
@@ -215,8 +318,8 @@
 					-webkit-line-clamp: 1;
 					/** 显示的行数 **/
 				}
-				
-				.icon{
+
+				.icon {
 					width: 5%;
 					display: flex;
 					flex-direction: row;
@@ -224,7 +327,7 @@
 					align-items: center;
 				}
 			}
-			
+
 			.select {
 				width: 30%;
 				display: flex;
@@ -235,7 +338,7 @@
 				border-radius: 32rpx;
 				background-color: #f6f6f6;
 			}
-			
+
 			.select .on {
 				width: 90rpx;
 				height: 60rpx;
@@ -245,7 +348,7 @@
 				text-align: center;
 				line-height: 60rpx;
 			}
-			
+
 			.select .off {
 				width: 90rpx;
 				height: 60rpx;
@@ -254,56 +357,60 @@
 				text-align: center;
 				line-height: 60rpx;
 			}
-			
-			
+
+
 		}
-	
-	
-		.nameAndPhone{
+
+
+		.nameAndPhone {
 			color: #999999;
 			font-size: 13px;
 		}
 	}
-	
-	
-	.orderDetail{
+
+
+	.orderDetail {
 		background-color: #FFFFFF;
 		padding-left: 20px;
 		padding-right: 20px;
 		display: flex;
 		flex-direction: column;
-		
-		
-		.itemList{
+
+
+		.itemList {
 			border-bottom: #f0f0f0 solid 1rpx;
 			padding-bottom: 15px;
-			
-			.item{
-				padding-top: 20px;
-				padding-bottom: 20px;
+
+			.item {
+				padding-top: 10px;
+				padding-bottom: 10px;
 				display: flex;
 				flex-direction: row;
 				flex-wrap: nowrap;
 				justify-content: flex-start;
 				align-items: flex-start;
 				align-content: center;
-				&>image{
+
+				&>image {
 					width: 20%;
-					width: 120rpx;
-					height: 120rpx;
+					width: 140rpx;
+					height: 140rpx;
 					margin-right: 16rpx;
 					margin-left: 2px;
 				}
-				.message{
+
+				.message {
 					width: 70%;
-					.name{
+
+					.name {
 						color: #000000;
-						font-size: 17px;
+						font-size: 15px;
 						font-weight: 500;
 						margin-top: 10rpx;
 						margin-bottom: 10rpx;
 					}
-					.describe{
+
+					.describe {
 						font-size: 24rpx;
 						color: #999;
 						// overflow: hidden;
@@ -319,40 +426,48 @@
 						// /** 显示的行数 **/
 					}
 				}
-				.priceAndNum{
+
+				.priceAndNum {
 					display: flex;
 					flex-direction: column;
 					justify-content: flex-start;
 					align-items: flex-end;
 					width: 20%;
-					.price{
+
+					.price {
 						font-size: 16px;
 						font-weight: 400;
 						color: #343434;
 					}
-					.num{
+
+					.num {
 						margin-top: 7px;
 						font-size: 13px;
 						color: #999999;
 					}
 				}
-				
+
 			}
 		}
-		
-		.mark{
+
+		.mark {
 			margin-top: 25px;
 			margin-bottom: 25px;
-			
-			
-			.text{color: #343434;margin-bottom: 10px;}
-			.input{}
-			.input-holder{
+
+
+			.text {
+				color: #343434;
+				margin-bottom: 10px;
+			}
+
+			.input {}
+
+			.input-holder {
 				font-weight: 500;
 			}
 		}
-		
-		.totalText{
+
+		.totalText {
 			display: flex;
 			flex-direction: row;
 			justify-content: flex-end;
@@ -361,21 +476,21 @@
 			color: #343434;
 			margin-top: 25px;
 			margin-bottom: 25px;
-			
-			.total-price{
+
+			.total-price {
 				color: #363636;
 				font-size: 20px;
 				font-weight: 500;
 				margin-left: 5px;
 			}
-			
+
 		}
-		
-		
+
+
 	}
-	
-	
-	.bottom{
+
+
+	.bottom {
 		margin-bottom: var(--window-bottom);
 		position: fixed;
 		bottom: 0;
@@ -385,7 +500,7 @@
 		z-index: 99;
 		display: flex;
 		background-color: #F0F0F1;
-		
+
 		.total-price {
 			display: flex;
 			flex-direction: row;
@@ -394,9 +509,9 @@
 			flex: 4;
 			font-size: 15px;
 			font-weight: 500;
-				color: #363636;
-		
-		
+			color: #363636;
+
+
 			.price {
 				color: #363636;
 				font-size: 20px;
@@ -405,7 +520,7 @@
 				margin-left: 5px;
 			}
 		}
-		
+
 		.BtnRight {
 			flex: 2;
 			background-color: #DBA871;
@@ -415,13 +530,10 @@
 			font-size: 17px;
 			font-weight: 500;
 			color: #FFFFFF;
-		
-		
-			.text {
-				
-			}
-		
+
+
+			.text {}
+
 		}
 	}
-
 </style>

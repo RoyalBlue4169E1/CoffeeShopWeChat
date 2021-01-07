@@ -2,7 +2,52 @@
 	"pages": [{
 			"path": "pages/index/index",
 			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/store/store",
+			"style": {
+				// "navigationStyle": "custom"
 				"navigationBarTitleText": ""
+			}
+		},
+
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		}, {
+
+			"path": "pages/orderPreview/orderPreview",
+			"style": {
+				"navigationBarTitleText": "订单结算",
+				"enablePullDownRefresh": false
+			}
+		}
+
+		, {
+			"path": "pages/selectAddress/selectAddress",
+			"style": {
+				"navigationBarTitleText": "选择收货地址",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/editAddress/editAddress",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/orderDetail/orderDetail",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"enablePullDownRefresh": false
 			}
 		},
 		{
@@ -10,24 +55,23 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
-		},
-		{
-			"path": "pages/user/user",
-			"style": {
-				"navigationBarTitleText": ""
-			}
 		}, {
-
-			"path": "pages/orderPreview/orderPreview",
+			"path": "pages/login/login",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
+
+		}, {
+			"path": "pages/setting/setting",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
 		}
-
-
 	    ,{
-            "path" : "pages/selectAddress/selectAddress",
+            "path" : "pages/address/address",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -36,7 +80,7 @@
             
         }
         ,{
-            "path" : "pages/editAddress/editAddress",
+            "path" : "pages/shopInfo/shopInfo",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -57,6 +101,12 @@
 		"backgroundColor": "#fff",
 		"list": [{
 				"pagePath": "pages/index/index",
+				"iconPath": "static/tabBar/index.png",
+				"selectedIconPath": "static/tabBar/index_selected.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/store/store",
 				"iconPath": "static/tabBar/cup.png",
 				"selectedIconPath": "static/tabBar/cup_selected.png",
 				"text": "点单"
@@ -84,4 +134,5 @@
 			"background": "#efeff4"
 		}
 	}
+
 }

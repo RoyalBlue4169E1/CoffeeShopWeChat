@@ -1,11 +1,17 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/order/order",
+    "pages/store/store",
     "pages/user/user",
     "pages/orderPreview/orderPreview",
     "pages/selectAddress/selectAddress",
-    "pages/editAddress/editAddress"
+    "pages/editAddress/editAddress",
+    "pages/orderDetail/orderDetail",
+    "pages/order/order",
+    "pages/login/login",
+    "pages/setting/setting",
+    "pages/address/address",
+    "pages/shopInfo/shopInfo"
   ],
   "subPackages": [],
   "window": {
@@ -21,6 +27,12 @@
     "list": [
       {
         "pagePath": "pages/index/index",
+        "iconPath": "static/tabBar/index.png",
+        "selectedIconPath": "static/tabBar/index_selected.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/store/store",
         "iconPath": "static/tabBar/cup.png",
         "selectedIconPath": "static/tabBar/cup_selected.png",
         "text": "点单"
@@ -39,6 +51,11 @@
       }
     ]
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
   "usingComponents": {},
-  "sitemapLocation": "sitemap67.json"
+  "sitemapLocation": "sitemap52.json"
 }

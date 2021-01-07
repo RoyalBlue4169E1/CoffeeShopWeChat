@@ -5,7 +5,7 @@
 			<view class="carIcon" @click.stop="toggleList">
 				<view class="iconBox" :class="getAllCount ? 'active' : '' ">
 					<text class="allcount" v-if="getAllCount">{{getAllCount}}</text>
-					<image src="/static/shopcart/shopcart.png" mode="aspectFit" class="img"></image>
+					<image :src="getAllCount?'/static/shopcart/shopcart.png':'/static/shopcart/shopcart0.png'" mode="aspectFit" class="img"></image>
 				</view>
 			</view>
 			<view class="middle" @click.stop="toggleList">
@@ -34,13 +34,13 @@
 				<view class="list">
 					<view class="list-item" v-for="(item,index) in order.orderItemList" :key="index">
 						<view class="image-box">
-							<image :src="item.product_picture" mode="aspectFit"></image>
+							<image :src="item.product.picture" mode="aspectFit"></image>
 						</view>
 
 
 
 						<view class="main">
-							<view class="name">{{item.product_name}}
+							<view class="name">{{item.product.name}}
 
 							</view>
 							<view class="note">{{item.note}}
@@ -48,7 +48,7 @@
 							</view>
 
 							<view class="bottom">
-								<view class="price">￥ {{item.product_actual_price}}
+								<view class="price">￥ {{item.productActualPrice}}
 
 								</view>
 								<view class="control">
@@ -56,7 +56,7 @@
 										<image style="width: 100%;height: 100%;" src="@/static/shopcart/des.png" mode="aspectFill" @click="desOrderItemCount(index)"></image>
 									</view>
 										
-									<text >{{item.count}}</text>
+									<text >{{item.sum}}</text>
 									<view  class="add" >
 										<uni-icons @click="addOrderItemCount(index)" style="background-color: #DBA871;border-radius: 100%;height: 100%;width: 100%;display: flex;align-items: center;justify-content: center;" type="plusempty" color="#FFFFFF"></uni-icons>
 									</view>
@@ -102,12 +102,12 @@
 			getAllCount() {
 				let res=0
 				for(let i=0;i<this.order.orderItemList.length;i++){
-					res+=this.order.orderItemList[i].count
+					res+=this.order.orderItemList[i].sum
 				}
 				return res
 			},
 			getOrderTotalPrice(){
-				return this.order.order_price
+				return this.order.orderPrice
 			}
 
 		},
@@ -309,7 +309,7 @@
 		left: 18px;
 		z-index: 101;
 
-		background-color: rgb(70, 73, 75);
+		background-color: #FFFFFF;
 		border-radius: 50%;
 		height: 55px;
 		width: 55px;

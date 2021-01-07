@@ -6,27 +6,14 @@
 		<view class="addressItem" v-for="(item,index) in addressList">
 			<view class="left" @click="selectAddress(item)">
 				<view class="address">
-					{{item.user_address+' '}}{{item.user_room}}
+					{{item.userAddress+' '}}{{item.userRoom}}
 				</view>
 				<view class="nameAndPhone">
-					{{item.user_name+' '}}{{item.user_phone}}
+					{{item.userName+' '}}{{item.userPhone}}
 				</view>
 			</view>
 			<view class="right">
 				<uni-icons size='20' class="icon" type="compose" color="#bdbdbd" @click="editAddress(item)"></uni-icons>
-			</view>
-		</view>
-		<view class="addressItem">
-			<view class="left">
-				<view class="address">
-					深圳职业技术学院留仙洞校区 校门口
-				</view>
-				<view class="nameAndPhone">
-					李良堃 18925542915
-				</view>
-			</view>
-			<view class="right">
-				<uni-icons size='20' class="icon" type="compose" color="#bdbdbd"></uni-icons>
 			</view>
 		</view>
 
@@ -41,6 +28,7 @@
 </template>
 
 <script>
+	import common from "../../common/util.js"
 	export default {
 		data() {
 			return {
@@ -75,6 +63,24 @@
 		},
 		onShow() {
 			//needApi:获取用户地址列表
+			let token = uni.getStorageSync("token")
+			if (token == null) {
+				console.log("token null")
+				if (!common.doLogin()) {
+					return
+				}
+			}
+			uni.request({
+				url: this.$apiUrl + '/wechat/address/list',
+				method: 'GET',
+				header: {
+					"Authorization": token
+				},
+				success: (res) => {
+					this.addressList = res.data.data.list
+					console.log(this.addressList,'getAddressList')
+				}
+			})
 		}
 	}
 </script>

@@ -1,7 +1,7 @@
 <template>
 	<view class="style-flex style-flex-wrap">
 		<filter-radio-item v-for="(item, idx) in items" :key="idx" :name="item.name" :value="item.value" :checked="item.checked"
-		 @change="radioChange"></filter-radio-item>
+		 @change="radioChange" @set="setItems()"></filter-radio-item>
 	</view>
 </template>
 
@@ -9,10 +9,10 @@
 	import filterRadioItem from './axb-checkbox-item.vue'
 	export default {
 		props: {
-			list: {
-				type: Array,
-				default: []
-			},
+			// list: {
+			// 	type: Array,
+			// 	default: []
+			// },
 			multi: {
 				type: Boolean,
 				default: false
@@ -23,7 +23,7 @@
 		},
 		data() {
 			return {
-				items: this.list,
+				items: [],
 				resMulti: [],
 			};
 		},
@@ -96,8 +96,8 @@
 				// 返回选择项
 				this.$emit('change', result)
 			},
-			reset: function() {
-				this.items = this.list
+			reset: function(list) {
+				this.items = list.concat()
 			},
 			setItems: function(val) {
 				this.items = val
