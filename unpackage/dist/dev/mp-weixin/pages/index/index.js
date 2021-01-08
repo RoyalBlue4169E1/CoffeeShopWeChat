@@ -188,7 +188,17 @@ var _default =
 
       return;
 
-    } } };exports.default = _default;
+    } },
+
+  onShow: function onShow() {
+    uni.request({
+      url: this.$apiUrl + '/wechat/config/mall',
+      method: 'GET',
+      success: function success(res) {
+        uni.setStorageSync('shopInfo', res.data.data);
+      } });
+
+  } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),

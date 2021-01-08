@@ -33,7 +33,7 @@
 
 
 		<view class="orderDetail">
-			<view class="itemList" v-for="(item,index) in order.orderItemList":key='index'>
+			<view class="itemList" v-for="(item,index) in order.orderItemList" :key='index'>
 				<view class="item">
 					<image :src="item.product.picture" mode="aspectFit"></image>
 					<view class="message">
@@ -98,7 +98,7 @@
 			return {
 				order: {},
 				shopInfo: {},
-				isSelectAddress:false
+				isSelectAddress: false
 			}
 		},
 		methods: {
@@ -134,14 +134,14 @@
 
 			},
 			settle() {
-				if(this.order.type=='0'&&!this.order.consigneeAddress){
+				if (this.order.type == '0' && !this.order.consigneeAddress) {
 					uni.showToast({
-						icon:"none",
-						title:"请选择地址"
+						icon: "none",
+						title: "请选择地址"
 					})
 					return
 				}
-				let that=this
+				let that = this
 				let token = uni.getStorageSync("token")
 				if (token == null) {
 					console.log("token null")
@@ -149,7 +149,6 @@
 						return
 					}
 				}
-				this.order.userId = 1
 				console.log("token:", token)
 				console.log(this.order)
 				uni.request({
@@ -160,15 +159,15 @@
 						"Authorization": token
 					},
 					success: function(submutRes) {
-						if(submutRes.statusCode!=200){
+						if (submutRes.statusCode != 200) {
 							console.log(submutRes)
 							uni.showToast({
 								title: '下单失败，请重试',
-								icon:'none'
+								icon: 'none'
 							});
 							return
 						}
-						
+
 						uni.showModal({
 							title: '模拟支付',
 							content: '点击确认模拟支付',
@@ -191,9 +190,9 @@
 								} else if (res.cancel) {
 
 								}
-								
+
 								setTimeout(function() {
-										uni.switchTab({ 
+										uni.switchTab({
 											url: '/pages/order/order'
 										})
 									},
@@ -211,6 +210,52 @@
 						});
 					}
 				})
+			},
+			Rad: function(d) { //根据经纬度判断距离
+				return d * Math.PI / 180.0;
+			},
+			getDistance: function(lat1, lng1, lat2, lng2) {
+				// lat1用户的纬度
+				// lng1用户的经度
+				// lat2商家的纬度
+				// lng2商家的经度
+				var radLat1 = this.Rad(lat1);
+				var radLat2 = this.Rad(lat2);
+				var a = radLat1 - radLat2;
+				var b = this.Rad(lng1) - this.Rad(lng2);
+				var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(
+					Math.sin(b / 2), 2)));
+				s = s * 6378.137;
+				s = Math.round(s * 10000) / 10000;
+				s = s.toFixed(2) //保留两位小数
+				console.log('经纬度计算的距离:' + s)
+				return s
+			
+			},
+			computedDistance(address){
+				let shopInfo=uni.getStorageSync("shopInfo")
+				return this.getDistance(address.latitude, address.longitude, shopInfo.dgutshop_shop_latitude,
+							shopInfo.dgutshop_shop_longitude)
+			},
+			getDefaultAddress() {
+				let defaultAddress = uni.getStorageSync('defaultAddress')
+				if (defaultAddress) {
+					return defaultAddress
+				} else {
+					uni.request({
+						url: this.$apiUrl + '/wechat/address/list',
+						method: 'GET',
+						header: {
+							"Authorization": token
+						},
+						success: (res) => {
+							for (let i = 0; i < res.data.data.list.length; i++) {
+								if (res.data.data.list[i].isDefault == '1'&&computedDistance(res.data.data.list[i])<15) this.addAddressInOrder(res.data.data.list[i])
+							}
+						}
+					})
+				}
+
 			}
 		},
 		onShow() {
@@ -229,8 +274,8 @@
 						"Authorization": token
 					},
 					success: (res) => {
-						for(let i=0;i<res.data.data.list.length;i++){
-							if(res.data.data.list[i].isDefault=='1') this.addAddressInOrder(res.data.data.list[i])
+						for (let i = 0; i < res.data.data.list.length; i++) {
+							if (res.data.data.list[i].isDefault == '1') this.addAddressInOrder(res.data.data.list[i])
 						}
 					}
 				})
@@ -261,12 +306,12 @@
 			getNameAndPhone() {
 				if (this.order.type) {
 					return ''
-				}else if(this.order.consignee){
+				} else if (this.order.consignee) {
 					return this.order.consignee + '' + this.order.consigneePhone
 				}
-				
+
 				return ""
-				
+
 			}
 
 		},

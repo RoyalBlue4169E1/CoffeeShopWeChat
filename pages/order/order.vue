@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view style="height: 100%;">
 		<view class="tabs-box">
 			<view class="hx-tabs">
 				<view class="hx-tabs-item" v-for="(item,i) in tabs" :key="i" :class="{'hx-tabs-active': swiperCurrent == i}" @click="swiperChange(i)"
@@ -13,7 +13,7 @@
 		</view>
 
 		<view class="main" :style="{height: mainHeight}">
-			<swiper id="mainSwiper" style="height: 100%;" :current="swiperCurrent" :duration="transtionTime" @animationfinish="animationfinish">
+			<swiper class="swiper" id="mainSwiper" style="height: 100%;" :current="swiperCurrent" :duration="transtionTime" @animationfinish="animationfinish">
 
 
 				<!-- 当前订单 -->
@@ -168,8 +168,12 @@
 			}
 		},
 		onShow(option) {
-			let isLogin = uni.getStorageSync("isLogin")
-			if (!isLogin || isLogin == null) {
+			let token=uni.getStorageSync("token")
+			console.log("token",token)
+			if (token) {
+				this.getOrderData()
+				
+			}else{
 				uni.showToast({
 					title: '请登录',
 				});
@@ -180,14 +184,11 @@
 			}
 
 
-			//TODO:检查登录，没有登陆的话转到/login
 			this.mainHeight = sysInfo.screenHeight - statusBarHeight - 50 - 60 - 50 + 'px';
 			this._freshing = false;
 
 
-			uni.showLoading()
-			this.getOrderData()
-			uni.hideLoading()
+
 
 		},
 		mounted() {
@@ -212,8 +213,12 @@
 			},
 			//获取数据函数
 			async getOrderData() {
-				console.log("啥b")
+				uni.showLoading({
+				    title: '加载中',
+					mask:true
+				});
 				await this.request(this)
+				uni.hideLoading()
 				console.log('request done')
 				this.tabs[0].data = new Array
 				this.tabs[0].sum = 0
@@ -246,6 +251,7 @@
 						}
 					}
 					console.log("getOrder")
+					
 					uni.request({
 						url: that.$apiUrl + '/wechat/order/list',
 						method: 'GET',
@@ -253,9 +259,16 @@
 							"Authorization": token
 						},
 						success: (res) => {
-							if ("errno" in res.data) {
-
+							if(res.data.errno=="501"){
+								uni.showToast({
+									title: '请登录',
+								});
+								uni.navigateTo({
+									url: '../login/login'
+								})
+								return
 							}
+							
 
 							console.log(res)
 							that.orderData = res.data
@@ -470,38 +483,13 @@
 	.main {
 		position: relative;
 		background-color: #ffffff;
+		height: 100%;
+		width: 100%;
 
 		#mainSwiper {
 			background-color: #eeeeee;
 			height: 100%;
 			width: 100%;
-
-			.bannerimg-box {
-				border-bottom-left-radius: 10upx;
-				border-bottom-right-radius: 10upx;
-				padding: 15px 24rpx 7px;
-
-				swiper {
-					height: 233rpx;
-					width: 699rpx;
-				}
-
-				.swiper-item {
-
-					display: flex;
-					justify-content: center;
-					align-content: center;
-					overflow: hidden;
-
-					width: 100%;
-					height: 100%;
-
-					image {
-						border-radius: 8px;
-						width: 100%;
-					}
-				}
-			}
 
 			.nullOrder {
 				display: flex;
@@ -528,7 +516,7 @@
 
 			.scroll-items {
 				height: 100%;
-				padding-top: 10px;
+				// padding-top: 10px;
 
 				.order-item {
 					padding: 5px 20px;

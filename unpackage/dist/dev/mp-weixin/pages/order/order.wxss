@@ -101,39 +101,12 @@
 .main {
   position: relative;
   background-color: #ffffff;
+  height: 100%;
+  width: 100%;
 }
 .main #mainSwiper {
   background-color: #eeeeee;
   height: 100%;
-  width: 100%;
-}
-.main #mainSwiper .bannerimg-box {
-  -webkit-border-bottom-left-radius: 10rpx;
-          border-bottom-left-radius: 10rpx;
-  -webkit-border-bottom-right-radius: 10rpx;
-          border-bottom-right-radius: 10rpx;
-  padding: 15px 24rpx 7px;
-}
-.main #mainSwiper .bannerimg-box swiper {
-  height: 233rpx;
-  width: 699rpx;
-}
-.main #mainSwiper .bannerimg-box .swiper-item {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-          justify-content: center;
-  -webkit-align-content: center;
-          align-content: center;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-}
-.main #mainSwiper .bannerimg-box .swiper-item image {
-  -webkit-border-radius: 8px;
-          border-radius: 8px;
   width: 100%;
 }
 .main #mainSwiper .nullOrder {
@@ -171,7 +144,6 @@
 }
 .main #mainSwiper .scroll-items {
   height: 100%;
-  padding-top: 10px;
 }
 .main #mainSwiper .scroll-items .order-item {
   padding: 5px 20px;

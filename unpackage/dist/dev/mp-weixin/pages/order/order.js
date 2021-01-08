@@ -409,16 +409,29 @@ var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js 
 var sysInfo = uni.getSystemInfoSync();var statusBarHeight = uni.getSystemInfoSync().statusBarHeight; //引入测试数据
 var _default = { data: function data() {return { mainHeight: 0, statusBarHeight: statusBarHeight, tabs: [{ name: '当前订单', data: [], sum: 0 }, { name: '历史订单', data: [], sum: 0 }], swiperCurrent: 0, //表示当前页
       transtionTime: 100, swiperCurrentSliderLeft: 0, orderData: [], triggered: false, //下拉刷新
-      reloadDown: true, shopInfo: {} };}, onShow: function onShow(option) {var isLogin = uni.getStorageSync("isLogin");if (!isLogin || isLogin == null) {uni.showToast({ title: '请登录' });uni.navigateTo({ url: '../login/login' });return;} //TODO:检查登录，没有登陆的话转到/login
-    this.mainHeight = sysInfo.screenHeight - statusBarHeight - 50 - 60 - 50 + 'px';this._freshing = false;uni.showLoading();this.getOrderData();uni.hideLoading();}, mounted: function mounted() {this.shopInfo = uni.getStorageSync("shopInfo");}, methods: { animationfinish: function animationfinish(_ref) {var current = _ref.detail.current; /* this.$refs.tabs.setFinishCurrent(current); */this.swiperCurrent = current;this.current = current;this.swiperChange(current);}, //点击上方tab更换订单类型
+      reloadDown: true, shopInfo: {} };}, onShow: function onShow(option) {var token = uni.getStorageSync("token");console.log("token", token);if (token) {this.getOrderData();} else {uni.showToast({ title: '请登录' });uni.navigateTo({ url: '../login/login' });return;}this.mainHeight = sysInfo.screenHeight - statusBarHeight - 50 - 60 - 50 + 'px';this._freshing = false;}, mounted: function mounted() {this.shopInfo = uni.getStorageSync("shopInfo");}, methods: { animationfinish: function animationfinish(_ref) {var current = _ref.detail.current; /* this.$refs.tabs.setFinishCurrent(current); */this.swiperCurrent = current;this.current = current;this.swiperChange(current);}, //点击上方tab更换订单类型
     swiperChange: function swiperChange(index) {//swiperCurrent表示当前页
       this.swiperCurrent = index;this.swiperCurrentSliderLeft = 100 / this.tabs.length * index;}, //获取数据函数
-    getOrderData: function getOrderData() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var orderData, i;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:console.log("啥b");_context.next = 3;return _this.request(_this);case 3:console.log('request done');_this.tabs[0].data = new Array();_this.tabs[0].sum = 0;_this.tabs[1].data = new Array();_this.tabs[1].sum = 0;orderData = _this.orderData;for (i in orderData) {if (orderData[i].orderStatus == '102' || orderData[i].orderStatus == '103' || orderData[i].orderStatus > '500') {_this.tabs[1].data.push(orderData[i]);_this.tabs[1].sum++;} else {_this.tabs[0].data.push(orderData[i]);_this.tabs[0].sum++;}}console.log(_this.tabs, 'tabs');case 11:case "end":return _context.stop();}}}, _callee);}))();}, request: function request(that) {//------------------------------------------
+    getOrderData: function getOrderData() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var orderData, i;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:uni.showLoading({ title: '加载中', mask: true });_context.next = 3;return _this.request(_this);case 3:uni.hideLoading();console.log('request done');_this.tabs[0].data = new Array();_this.tabs[0].sum = 0;_this.tabs[1].data = new Array();_this.tabs[1].sum = 0;orderData = _this.orderData;for (i in orderData) {if (orderData[i].orderStatus == '102' || orderData[i].orderStatus == '103' || orderData[i].orderStatus > '500') {_this.tabs[1].data.push(orderData[i]);_this.tabs[1].sum++;} else {_this.tabs[0].data.push(orderData[i]);_this.tabs[0].sum++;}}console.log(_this.tabs, 'tabs');case 12:case "end":return _context.stop();}}}, _callee);}))();}, request: function request(that) {//------------------------------------------
       //--------------------------------------------	
-      console.log("get");return new Promise(function (resolve, reject) {var token = uni.getStorageSync("token");if (token == null) {console.log("token null");if (!_util.default.doLogin()) {return;}}console.log("getOrder");uni.request({ url: that.$apiUrl + '/wechat/order/list', method: 'GET', header: { "Authorization": token }, success: function success(res) {if ("errno" in res.data) {}console.log(res);that.orderData = res.data;console.log(that.orderData, 'orderData');resolve('suc');} });}); //--------------------------------------------
+      console.log("get");return new Promise(function (resolve, reject) {var token = uni.getStorageSync("token");if (token == null) {console.log("token null");if (!_util.default.doLogin()) {return;}}console.log("getOrder");uni.request({ url: that.$apiUrl + '/wechat/order/list', method: 'GET', header: { "Authorization": token }, success: function success(res) {if (res.data.errno == "501") {uni.showToast({ title: '请登录' });uni.navigateTo({ url: '../login/login' });return;}console.log(res);that.orderData = res.data;console.log(that.orderData, 'orderData');resolve('suc');} });});
       //--------------------------------------------
-    }, // 下拉刷新
-    onRefresh: function onRefresh() {var _this2 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:if (!_this2._freshing) {_context2.next = 2;break;}return _context2.abrupt("return");case 2:_this2._freshing = true;_this2.triggered = true;_context2.next = 6;return _this2.getOrderData();case 6:_this2.triggered = false;_this2._freshing = false;case 8:case "end":return _context2.stop();}}}, _callee2);}))();}, onRestore: function onRestore() {console.log("重置刷新");
+      //--------------------------------------------
+    },
+    // 下拉刷新
+    onRefresh: function onRefresh() {var _this2 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:if (!
+                _this2._freshing) {_context2.next = 2;break;}return _context2.abrupt("return");case 2:
+                _this2._freshing = true;
+                _this2.triggered = true;_context2.next = 6;return (
+
+                  _this2.getOrderData());case 6:
+
+                _this2.triggered = false;
+                _this2._freshing = false;case 8:case "end":return _context2.stop();}}}, _callee2);}))();
+
+    },
+    onRestore: function onRestore() {
+      console.log("重置刷新");
     },
     //去支付
     goPay: function goPay(orderId) {

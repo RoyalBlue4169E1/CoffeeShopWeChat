@@ -303,6 +303,18 @@ page {
   margin-top: 10rpx;
   margin-bottom: 10rpx;
 }
+.scroll-panel .list-box .main .goods .heated {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+          justify-content: flex-start;
+}
 .scroll-panel .list-box .main .goods .describe {
   font-size: 24rpx;
   width: 360rpx;

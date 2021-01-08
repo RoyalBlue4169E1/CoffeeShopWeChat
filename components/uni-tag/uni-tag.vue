@@ -206,10 +206,10 @@
 
 	.uni-tag--error {
 		color: $uni-text-color-inverse;
-		background-color: $uni-color-error;
+		background-color: #ffb3b3;
 		border-width: 1rpx;
 		border-style: solid;
-		border-color: $uni-color-error;
+		// border-color: $uni-color-error;
 	}
 
 	.error-uni-tag--inverted {

@@ -3,8 +3,9 @@
 
 		<view class="header" v-if="order.orderStatus=='101'">
 			<view class="title">订单未支付</view>
+			<uni-countdown :show-day="false"  :minute="minues" :second="second" @timeup="timeup"></uni-countdown>
 			<view class="text">
-				订单二十分钟未支付将自动取消
+				订单三十分钟未支付将自动取消
 			</view>
 		</view>
 
@@ -161,13 +162,33 @@
 </template>
 
 <script>
+	import uniCountdown from '@/components/uni-countdown/uni-countdown.vue'
 	export default {
+		components: {
+			uniCountdown
+		},
 		data() {
 			return {
 				order: {},
+				minues: '20',
+				second: '0'
 			}
 		},
 		methods: {
+			getCurrentTime() {
+				var date = new Date(); //当前时间
+				var month = zeroFill(date.getMonth() + 1); //月
+				var day = zeroFill(date.getDate()); //日
+				var hour = zeroFill(date.getHours()); //时
+				var minute = zeroFill(date.getMinutes()); //分
+				var second = zeroFill(date.getSeconds()); //秒
+
+				//当前时间
+				var curTime = date.getFullYear() + "-" + month + "-" + day +
+					" " + hour + ":" + minute + ":" + second;
+
+				return curTime;
+			},
 			pay() {
 				let that = this
 				let token = uni.getStorageSync("token")
@@ -192,6 +213,14 @@
 									orderId: that.order.id
 								},
 								success: (res) => {
+									if (res.statusCode != 200) {
+										console.log(submutRes)
+										uni.showToast({
+											title: '支付失败，请重试',
+											icon: 'none'
+										});
+										return
+									}
 									console.log(res, 'payRes')
 									uni.navigateBack({
 										delta: 1
@@ -275,10 +304,43 @@
 						}
 					}
 				});
+			},
+			timeup(){
+				this.order.orderStatus="103"
 			}
 		},
 		onShow() {
 			this.order = uni.getStorageSync('orderDetail')
+
+			var dateStr = this.order.createTime.replace(/\-/g, "/");
+			var orderDate = new Date(dateStr); //date1就是一个日期类型了
+			// var currentDateStr=this.getCurrentTime().replace(/\-/g, "/")
+			var currentDate = new Date()
+			
+			console.log("当前时间：",currentDate)
+			console.log("订单时间：",orderDate)
+
+			var date3 = orderDate.getTime() - currentDate.getTime() + 30*60*1000-2000; //时间差秒
+			console.log(date3)
+			//计算出相差天数
+			var days = Math.floor(date3 / (24 * 3600 * 1000))
+
+			//计算出小时数
+			var leave1 = date3 % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+			var hours = Math.floor(leave1 / (3600 * 1000))
+
+			//计算相差分钟数
+			var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+			var minutes = Math.floor(leave2 / (60 * 1000))
+
+			//计算相差秒数
+			var leave3 = leave2 % (60 * 1000) //计算分钟数后剩余的毫秒数
+			var seconds = Math.round(leave3 / 1000)
+			console.log("时间差" + days + "天" + hours + "时" + minutes + "分" + seconds + "秒");
+
+			this.minues=minutes
+			this.second=seconds
+
 		},
 		computed: {
 			getAllCount() {

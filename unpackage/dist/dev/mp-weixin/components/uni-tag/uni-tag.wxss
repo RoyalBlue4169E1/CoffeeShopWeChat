@@ -132,10 +132,9 @@
 }
 .uni-tag--error.data-v-3f606880 {
   color: #fff;
-  background-color: #dd524d;
+  background-color: #ffb3b3;
   border-width: 1rpx;
   border-style: solid;
-  border-color: #dd524d;
 }
 .error-uni-tag--inverted.data-v-3f606880 {
   color: #dd524d;

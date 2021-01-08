@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "",
+  "navigationBarTitleText": "编辑地址",
   "enablePullDownRefresh": false,
   "usingComponents": {
     "uni-icons": "/components/uni-icons/uni-icons"

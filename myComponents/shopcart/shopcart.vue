@@ -29,7 +29,7 @@
 					</view>
 				</view>
 			</view>
-			<scroll-view class="scroll" scroll-y style="max-height: 600px;display: flex;flex-direction: column;">
+			<scroll-view class="scroll" scroll-y style="height: 400px;display: flex;flex-direction: column;overflow: hidden;">
 
 				<view class="list">
 					<view class="list-item" v-for="(item,index) in order.orderItemList" :key="index">

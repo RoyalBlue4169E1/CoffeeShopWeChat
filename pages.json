@@ -16,7 +16,7 @@
 		{
 			"path": "pages/user/user",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "个人信息",
 				"navigationBarTextStyle": "black",
 				"navigationBarBackgroundColor": "#FFFFFF"
 			}
@@ -39,7 +39,7 @@
 		}, {
 			"path": "pages/editAddress/editAddress",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "编辑地址",
 				"enablePullDownRefresh": false
 			}
 
@@ -53,19 +53,19 @@
 		{
 			"path": "pages/order/order",
 			"style": {
-				"navigationBarTitleText": ""
+				"navigationBarTitleText": "订单列表"
 			}
 		}, {
 			"path": "pages/login/login",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "登录",
 				"enablePullDownRefresh": false
 			}
 
 		}, {
 			"path": "pages/setting/setting",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "设置",
 				"enablePullDownRefresh": false
 			}
 
@@ -74,7 +74,7 @@
             "path" : "pages/address/address",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
+                "navigationBarTitleText": "地址列表",
                 "enablePullDownRefresh": false
             }
             
@@ -83,7 +83,7 @@
             "path" : "pages/shopInfo/shopInfo",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
+                "navigationBarTitleText": "店铺信息",
                 "enablePullDownRefresh": false
             }
             

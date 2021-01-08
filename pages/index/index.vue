@@ -52,6 +52,15 @@
 				return
 
 			},
+		},
+		onShow() {
+			uni.request({
+				url: this.$apiUrl + '/wechat/config/mall',
+				method: 'GET',
+				success: (res) => {
+					uni.setStorageSync('shopInfo', res.data.data)
+				}
+			})
 		}
 	}
 </script>

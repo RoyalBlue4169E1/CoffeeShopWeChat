@@ -323,8 +323,7 @@ var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js 
 //
 var _default = { data: function data() {return { order: {}, shopInfo: {}, isSelectAddress: false };}, methods: { changePeisongType: function changePeisongType() {//修改订单派送类型
       this.order.type = this.order.type == 0 ? 1 : 0;if (this.order.type) {this.addAddressInOrder();} else {this.order.consignee = '';this.order.consigneePhone = '';this.order.consigneeAddress = '';this.order.consigneeRoom = '';}}, changeAddress: function changeAddress() {//跳转到选择地址
-      uni.setStorageSync('settle_order', this.order);uni.navigateTo({ url: '../selectAddress/selectAddress' });}, addAddressInOrder: function addAddressInOrder(address) {if (address == null) {address = uni.getStorageSync('defaultAddress');if (address == null) return;} else {this.order.consignee = address.userName;this.order.consigneePhone = address.userPhone;this.order.consigneeAddress = address.userAddress;this.order.consigneeRoom = address.userRoom;}}, settle: function settle() {if (this.order.type == '0' && !this.order.consigneeAddress) {uni.showToast({ icon: "none", title: "请选择地址" });return;}var that = this;var token = uni.getStorageSync("token");if (token == null) {console.log("token null");if (!_util.default.doLogin()) {return;}}this.order.userId = 1;console.log("token:", token);console.log(this.order);uni.request({ url: this.$apiUrl + '/wechat/order/submit', method: "POST", data: this.order, header: { "Authorization": token }, success: function success(submutRes) {if (submutRes.statusCode != 200) {console.log(submutRes);uni.showToast({ title: '下单失败，请重试', icon: 'none' });return;}uni.showModal({ title: '模拟支付', content: '点击确认模拟支付', success: function success(res) {if (res.confirm) {uni.request({ url: that.$apiUrl + '/wechat/order/h5pay', method: 'POST', header: { "Authorization": token }, data: { orderId: submutRes.data.data.orderId }, success: function success(payRes) {console.log(payRes, 'payRes');} });
-              } else if (res.cancel) {
+      uni.setStorageSync('settle_order', this.order);uni.navigateTo({ url: '../selectAddress/selectAddress' });}, addAddressInOrder: function addAddressInOrder(address) {if (address == null) {address = uni.getStorageSync('defaultAddress');if (address == null) return;} else {this.order.consignee = address.userName;this.order.consigneePhone = address.userPhone;this.order.consigneeAddress = address.userAddress;this.order.consigneeRoom = address.userRoom;}}, settle: function settle() {if (this.order.type == '0' && !this.order.consigneeAddress) {uni.showToast({ icon: "none", title: "请选择地址" });return;}var that = this;var token = uni.getStorageSync("token");if (token == null) {console.log("token null");if (!_util.default.doLogin()) {return;}}console.log("token:", token);console.log(this.order);uni.request({ url: this.$apiUrl + '/wechat/order/submit', method: "POST", data: this.order, header: { "Authorization": token }, success: function success(submutRes) {if (submutRes.statusCode != 200) {console.log(submutRes);uni.showToast({ title: '下单失败，请重试', icon: 'none' });return;}uni.showModal({ title: '模拟支付', content: '点击确认模拟支付', success: function success(res) {if (res.confirm) {uni.request({ url: that.$apiUrl + '/wechat/order/h5pay', method: 'POST', header: { "Authorization": token }, data: { orderId: submutRes.data.data.orderId }, success: function success(payRes) {console.log(payRes, 'payRes');} });} else if (res.cancel) {
 
               }
 
@@ -347,9 +346,55 @@ var _default = { data: function data() {return { order: {}, shopInfo: {}, isSele
 
         } });
 
+    },
+    Rad: function Rad(d) {//根据经纬度判断距离
+      return d * Math.PI / 180.0;
+    },
+    getDistance: function getDistance(lat1, lng1, lat2, lng2) {
+      // lat1用户的纬度
+      // lng1用户的经度
+      // lat2商家的纬度
+      // lng2商家的经度
+      var radLat1 = this.Rad(lat1);
+      var radLat2 = this.Rad(lat2);
+      var a = radLat1 - radLat2;
+      var b = this.Rad(lng1) - this.Rad(lng2);
+      var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(
+      Math.sin(b / 2), 2)));
+      s = s * 6378.137;
+      s = Math.round(s * 10000) / 10000;
+      s = s.toFixed(2); //保留两位小数
+      console.log('经纬度计算的距离:' + s);
+      return s;
+
+    },
+    computedDistance: function computedDistance(address) {
+      var shopInfo = uni.getStorageSync("shopInfo");
+      return this.getDistance(address.latitude, address.longitude, shopInfo.dgutshop_shop_latitude,
+      shopInfo.dgutshop_shop_longitude);
+    },
+    getDefaultAddress: function getDefaultAddress() {var _this = this;
+      var defaultAddress = uni.getStorageSync('defaultAddress');
+      if (defaultAddress) {
+        return defaultAddress;
+      } else {
+        uni.request({
+          url: this.$apiUrl + '/wechat/address/list',
+          method: 'GET',
+          header: {
+            "Authorization": token },
+
+          success: function success(res) {
+            for (var i = 0; i < res.data.data.list.length; i++) {
+              if (res.data.data.list[i].isDefault == '1' && computedDistance(res.data.data.list[i]) < 15) _this.addAddressInOrder(res.data.data.list[i]);
+            }
+          } });
+
+      }
+
     } },
 
-  onShow: function onShow() {var _this = this;
+  onShow: function onShow() {var _this2 = this;
     console.log('onshow');
     this.order = uni.getStorageSync('settle_order');
     var selectedAddress = uni.getStorageSync('selectedAddress');
@@ -366,7 +411,7 @@ var _default = { data: function data() {return { order: {}, shopInfo: {}, isSele
 
         success: function success(res) {
           for (var i = 0; i < res.data.data.list.length; i++) {
-            if (res.data.data.list[i].isDefault == '1') _this.addAddressInOrder(res.data.data.list[i]);
+            if (res.data.data.list[i].isDefault == '1') _this2.addAddressInOrder(res.data.data.list[i]);
           }
         } });
 

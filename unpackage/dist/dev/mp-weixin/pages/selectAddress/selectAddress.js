@@ -164,7 +164,55 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js */ 32));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -196,25 +244,37 @@ var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js 
 var _default = { data: function data() {return { addressList: [] };}, methods: { selectAddress: function selectAddress(item) {//选择地址，set进缓存，然后back
       uni.setStorageSync('selectedAddress', item);uni.navigateBack({ animationType: 'slide-out-right', animationDuration: 800 });}, editAddress: function editAddress(item) {//修改地址，点击的地址set进缓存，然后跳转
       uni.setStorageSync('editAddressType', 'edit');uni.setStorageSync('needEditAddress', item);uni.navigateTo({ url: '../editAddress/editAddress' });}, createAddress: function createAddress() {//新建地址，然后跳转
-      uni.setStorageSync('editAddressType', 'create');uni.navigateTo({ url: '../editAddress/editAddress' });} },
-  onShow: function onShow() {var _this = this;
-    //needApi:获取用户地址列表
-    var token = uni.getStorageSync("token");
-    if (token == null) {
-      console.log("token null");
-      if (!_util.default.doLogin()) {
-        return;
-      }
-    }
-    uni.request({
+      uni.setStorageSync('editAddressType', 'create');uni.navigateTo({ url: '../editAddress/editAddress' });}, Rad: function Rad(d) {//根据经纬度判断距离
+      return d * Math.PI / 180.0;}, getDistance: function getDistance(lat1, lng1, lat2, lng2) {// lat1用户的纬度
+      // lng1用户的经度
+      // lat2商家的纬度
+      // lng2商家的经度
+      var radLat1 = this.Rad(lat1);var radLat2 = this.Rad(lat2);var a = radLat1 - radLat2;var b = this.Rad(lng1) - this.Rad(lng2);var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));s = s * 6378.137;s = Math.round(s * 10000) / 10000;s = s.toFixed(2); //保留两位小数
+      console.log('经纬度计算的距离:' + s);return s;} }, onShow: function onShow() {var _this = this; //needApi:获取用户地址列表
+    var token = uni.getStorageSync("token");if (token == null) {console.log("token null");if (!_util.default.doLogin()) {return;}}uni.request({
       url: this.$apiUrl + '/wechat/address/list',
       method: 'GET',
       header: {
         "Authorization": token },
 
       success: function success(res) {
+        var shopInfo = uni.getStorageSync("shopInfo");
         _this.addressList = res.data.data.list;
         console.log(_this.addressList, 'getAddressList');
+
+        for (var i = 0; i < _this.addressList.length; i++) {
+          var distance = _this.getDistance(_this.addressList[i].latitude, _this.addressList[i].longitude, shopInfo.dgutshop_shop_latitude,
+          shopInfo.dgutshop_shop_longitude);
+          console.log("address", _this.addressList[i]);
+          console.log("distance", distance);
+          if (distance > 15) {
+            _this.addressList[i].isToFar = true;
+          } else {
+            _this.addressList[i].isToFar = false;
+          }
+        }
+
+
       } });
 
   } };exports.default = _default;

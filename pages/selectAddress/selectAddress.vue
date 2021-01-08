@@ -1,21 +1,45 @@
 <template>
 	<view>
-		<view class="selectText">
-			选择收货地址
-		</view>
-		<view class="addressItem" v-for="(item,index) in addressList">
-			<view class="left" @click="selectAddress(item)">
-				<view class="address">
-					{{item.userAddress+' '}}{{item.userRoom}}
+		<view class="canSelectAddress" style="border-bottom: #dadada solid 1rpx;padding-bottom: 10px;">
+			<view class="selectText">
+				选择收货地址
+			</view>
+
+			<view class="addressItem" v-for="(item,index) in addressList" :key="index" v-if="!item.isToFar">
+				<view class="left" @click="selectAddress(item)">
+					<view class="address">
+						{{item.userAddress+' '}}{{item.userRoom}}
+					</view>
+					<view class="nameAndPhone">
+						{{item.userName+' '}}{{item.userPhone}}
+					</view>
 				</view>
-				<view class="nameAndPhone">
-					{{item.userName+' '}}{{item.userPhone}}
+				<view class="right">
+					<uni-icons size='20' class="icon" type="compose" color="#bdbdbd" @click="editAddress(item)"></uni-icons>
 				</view>
 			</view>
-			<view class="right">
-				<uni-icons size='20' class="icon" type="compose" color="#bdbdbd" @click="editAddress(item)"></uni-icons>
+		</view>
+
+		<view class="toFarAddress">
+			<view class="selectText" style="margin-top: 20px;">
+				距离过远
+			</view>
+			<view class="addressItem" v-for="(item,index) in addressList" :key="index" v-if="item.isToFar">
+				<view class="left">
+					<view class="address" style="color: #999999;">
+						{{item.userAddress+' '}}{{item.userRoom}}
+					</view>
+					<view class="nameAndPhone">
+						{{item.userName+' '}}{{item.userPhone}}
+					</view>
+				</view>
+				<view class="right">
+					<uni-icons size='20' class="icon" type="compose" color="#bdbdbd" @click="editAddress(item)"></uni-icons>
+				</view>
 			</view>
 		</view>
+
+
 
 
 		<view class="bottom" @click="createAddress">
@@ -32,33 +56,54 @@
 	export default {
 		data() {
 			return {
-				addressList:[],
+				addressList: [],
 			}
 		},
 		methods: {
-			selectAddress(item){
+			selectAddress(item) {
 				//选择地址，set进缓存，然后back
-				uni.setStorageSync('selectedAddress',item)
+				uni.setStorageSync('selectedAddress', item)
 				uni.navigateBack({
-					animationType:'slide-out-right',
+					animationType: 'slide-out-right',
 					animationDuration: 800
 				})
 			},
-			editAddress(item){
+			editAddress(item) {
 				//修改地址，点击的地址set进缓存，然后跳转
-				uni.setStorageSync('editAddressType','edit')
-				uni.setStorageSync('needEditAddress',item)
+				uni.setStorageSync('editAddressType', 'edit')
+				uni.setStorageSync('needEditAddress', item)
 				uni.navigateTo({
-					url:'../editAddress/editAddress'
+					url: '../editAddress/editAddress'
 				})
 			},
-			createAddress(){
+			createAddress() {
 				//新建地址，然后跳转
-				uni.setStorageSync('editAddressType','create')
+				uni.setStorageSync('editAddressType', 'create')
 				uni.navigateTo({
-					url:'../editAddress/editAddress'
+					url: '../editAddress/editAddress'
 				})
-			}
+			},
+			Rad: function(d) { //根据经纬度判断距离
+				return d * Math.PI / 180.0;
+			},
+			getDistance: function(lat1, lng1, lat2, lng2) {
+				// lat1用户的纬度
+				// lng1用户的经度
+				// lat2商家的纬度
+				// lng2商家的经度
+				var radLat1 = this.Rad(lat1);
+				var radLat2 = this.Rad(lat2);
+				var a = radLat1 - radLat2;
+				var b = this.Rad(lng1) - this.Rad(lng2);
+				var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(
+					Math.sin(b / 2), 2)));
+				s = s * 6378.137;
+				s = Math.round(s * 10000) / 10000;
+				s = s.toFixed(2) //保留两位小数
+				console.log('经纬度计算的距离:' + s)
+				return s
+
+			},
 
 		},
 		onShow() {
@@ -77,8 +122,23 @@
 					"Authorization": token
 				},
 				success: (res) => {
+					let shopInfo = uni.getStorageSync("shopInfo")
 					this.addressList = res.data.data.list
-					console.log(this.addressList,'getAddressList')
+					console.log(this.addressList, 'getAddressList')
+
+					for (let i = 0; i < this.addressList.length; i++) {
+						let distance = this.getDistance(this.addressList[i].latitude, this.addressList[i].longitude, shopInfo.dgutshop_shop_latitude,
+							shopInfo.dgutshop_shop_longitude)
+						console.log("address", this.addressList[i])
+						console.log("distance", distance)
+						if (distance > 15) {
+							this.addressList[i].isToFar = true
+						} else {
+							this.addressList[i].isToFar = false
+						}
+					}
+
+
 				}
 			})
 		}

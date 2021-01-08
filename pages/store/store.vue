@@ -23,8 +23,8 @@
 							{{selectProduct.name}}
 						</view>
 
-						<uni-tag class="sort" text="含乳制品、茶" :circle="true" size="small"></uni-tag>
-						<uni-tag v-if="selectProduct.heated" class="sort" text="可做热饮" :circle="true" size="small"></uni-tag>
+						<!-- <uni-tag class="sort" text="含乳制品、茶" :circle="true" size="small"></uni-tag> -->
+						<uni-tag v-if="selectProduct.heated" class="sort" text="可做热饮" :circle="true" size="small" type="error"></uni-tag>
 
 						<view class="describe">
 							<view class="title">产品描述</view>
@@ -47,7 +47,6 @@
 							</view>
 						</view>
 
-						<!-- TODO：可不可做热饮的时候要更改标签，搞成disable -->
 						<view class="size">
 							<view class="title">温度</view>
 							<view class="content">
@@ -155,6 +154,7 @@
 								<image :src="item2.product.picture" mode="aspectFit"></image>
 								<view>
 									<view class="title">{{item2.product.name}}</view>
+									<uni-tag v-if="item2.product.heated" class="heated" text="可做热饮" :circle="true" size="small" type="error"></uni-tag>
 									<view class="describe">{{item2.product.description}}</view>
 									<!-- TODO:加个销量显示 -->
 									<view class="bottom">
@@ -171,7 +171,7 @@
 								</view>
 							</view>
 							<!-- 为了不被tarBar或购物车遮盖，进行的填充 -->
-							
+
 						</view>
 						<view style="height: 150px;"></view>
 						<!-- <view class="fill-last" :style="{ height: fillHeight + 'px' }"></view> -->
@@ -206,7 +206,7 @@
 			return {
 				distance: 0,
 				statusBarHeight: 0, //顶部导航栏高度
-				isClick:false,
+				isClick: false,
 				menuScrollIntoView: '',
 				cateScrollTop: 0,
 				currentCateId: 0,
@@ -280,6 +280,22 @@
 						checked: 0
 					},
 				],
+				ice_noHot: [{
+						name: '冰',
+						value: '冰',
+						checked: 1
+					},
+					{
+						name: '少冰',
+						value: '少冰',
+						checked: 0
+					},
+					{
+						name: '去冰',
+						value: '去冰',
+						checked: 0
+					},
+				],
 				toppingList: [],
 				toppingNameAndPrice: {},
 				selectProduct: {},
@@ -334,7 +350,11 @@
 			},
 			openProductPopup(item) {
 				this.$refs.toppingCheckBox.setItems(this.toppingList)
-				this.$refs.iceCheckBox.setItems(this.ice)
+				if(item.heated){
+					this.$refs.iceCheckBox.setItems(this.ice)
+				}else{
+					this.$refs.iceCheckBox.setItems(this.ice_noHot)
+				}
 				this.$refs.sizeCheckBox.setItems(this.size)
 				this.$refs.sweetCheckBox.setItems(this.sweet)
 				this.selectProduct = item
@@ -351,7 +371,7 @@
 					toppingTotal: '',
 					note: ''
 				}
-			
+
 
 				for (let i = 0; i < this.toppingList.length; i++) {
 					this.toppingList[i].checked = 0
@@ -424,16 +444,16 @@
 			computedFormDataTotalPrice() {
 				let product = this.selectProduct
 				if (this.formData.size == '中杯') {
-					this.formData.productOriginalPrice=product.mediumOriginalPrice
-					this.formData.productPromotePrice=product.mediumPromotePrice?product.mediumPromotePrice:product.mediumOriginalPrice
+					this.formData.productOriginalPrice = product.mediumOriginalPrice
+					this.formData.productPromotePrice = product.mediumPromotePrice ? product.mediumPromotePrice : product.mediumOriginalPrice
 					if (product.mediumPromotePrice != null) {
 						this.formData.productActualPrice = product.mediumPromotePrice
 					} else {
 						this.formData.productActualPrice = product.mediumOriginalPrice
 					}
 				} else {
-					this.formData.productOriginalPrice=product.bigOriginalPrice
-					this.formData.productPromotePrice=product.bigPromotePrice?product.bigPromotePrice:product.bigOriginalPrice
+					this.formData.productOriginalPrice = product.bigOriginalPrice
+					this.formData.productPromotePrice = product.bigPromotePrice ? product.bigPromotePrice : product.bigOriginalPrice
 					if (product.bigPromotePrice != null) {
 						this.formData.productActualPrice = product.bigPromotePrice
 					} else {
@@ -499,6 +519,7 @@
 			},
 			settle() {
 				let isLogin = uni.getStorageSync("isLogin")
+				let that = this
 				if (!isLogin || isLogin == null) {
 					uni.showToast({
 						title: '请登录',
@@ -515,46 +536,68 @@
 						image: '/static/shopcart/shopcart.png'
 					});
 				} else {
+					console.log(this.distance, "distance")
+					if (this.distance > 15 && this.order.type == '1') {
+						uni.showModal({
+							title: '距离门店过远',
+							content: '您距离门店' + this.distance + "千米，距离过远，请确认是否下单",
+							success: function(res) {
+								if (res.confirm) {
+									uni.setStorageSync('settle_order', that.order)
+									uni.navigateTo({
+										url: '../orderPreview/orderPreview'
+									})
+
+
+								} else if (res.cancel) {
+
+								}
+							}
+						});
+					} else {
+						uni.setStorageSync('settle_order', this.order)
+						uni.navigateTo({
+							url: '../orderPreview/orderPreview'
+						})
+					}
+
 					//结算函数
-					uni.setStorageSync('settle_order', this.order)
-					uni.navigateTo({
-						url: '../orderPreview/orderPreview'
-					})
+
 				}
 
 			},
 
 			handleMenuTap(id) { //点击菜单项事件
-			
-			this.isClick=true
+
+				this.isClick = true
 				if (!this.sizeCalcState) {
 					this.calcSize()
 				}
 
 				this.currentCateId = id
 				this.$nextTick(() => this.cateScrollTop = this.menu.find(item => item.id == id).top)
-				
+
 			},
 			handleGoodsScroll({
 				detail
 			}) { //商品列表滚动事件
-			if(this.isClick){
-				this.isClick=false
-				return
-			}
+				if (this.isClick) {
+					this.isClick = false
+					return
+				}
 				if (!this.sizeCalcState) {
 					this.calcSize()
 				}
 				const {
 					scrollTop
 				} = detail
-				let tabs = this.menu.filter(item => item.top+10 <= scrollTop).reverse()
+				let tabs = this.menu.filter(item => item.top + 10 <= scrollTop).reverse()
 				if (tabs.length > 0) {
 					this.currentCateId = tabs[0].id
 					console.log("avtive change")
 				}
-				
-				
+
+
 
 			},
 			calcSize() {
@@ -607,7 +650,7 @@
 					Math.sin(b / 2), 2)));
 				s = s * 6378.137;
 				s = Math.round(s * 10000) / 10000;
-				s = s.toFixed(2) + '公里' //保留两位小数
+				s = s.toFixed(2) //保留两位小数
 				console.log('经纬度计算的距离:' + s)
 				return s
 
@@ -624,8 +667,8 @@
 			console.log("isTakeOut:", uni.getStorageSync("isTakeOut"))
 			if (uni.getStorageSync("isTakeOut")) {
 				this.order.type = 0
-			}else{
-				this.order.type=1
+			} else {
+				this.order.type = 1
 			}
 			uni.removeStorageSync('isTakeOut');
 		},
@@ -676,16 +719,7 @@
 			console.log(this.statusBarHeight)
 
 			//获取商家信息
-			uni.request({
-				url: this.$apiUrl + '/wechat/config/mall',
-				method: 'GET',
-				success: (res) => {
-					console.log('shopInfo')
-					that.shopInfo = res.data.data
-					uni.setStorageSync('shopInfo', that.shopInfo)
-					console.log(that.shopInfo)
-				}
-			})
+			this.shopInfo = uni.getStorageSync("shopInfo")
 
 
 
@@ -696,7 +730,9 @@
 				success: (res) => {
 					console.log('slideShowList')
 					that.ads = res.data
-					console.log(that.ads)
+					that.ads.sort(function(a, b) {
+						return a.index - b.index
+					})
 				}
 			})
 
@@ -950,6 +986,8 @@
 				top: 0;
 				z-index: 19;
 			}
+			
+			
 
 			.item {
 				padding-bottom: 10rpx;
@@ -979,6 +1017,12 @@
 					font-weight: 700;
 					margin-top: 10rpx;
 					margin-bottom: 10rpx;
+				}
+				
+				.heated{
+					display: flex;
+					flex-direction: row;
+					justify-content: flex-start;
 				}
 
 				.describe {

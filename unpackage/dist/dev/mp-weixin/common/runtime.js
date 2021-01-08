@@ -105,11 +105,11 @@
 /******/
 /******/
 /******/ 		// mini-css-extract-plugin CSS loading
-/******/ 		var cssChunks = {"components/uni-icons/uni-icons":1,"components/uni-popup/uni-popup":1,"components/axb-checkbox/axb-checkbox":1,"components/uni-tag/uni-tag":1,"myComponents/shopcart/shopcart":1,"components/uni-transition/uni-transition":1,"components/axb-checkbox/axb-checkbox-item":1};
+/******/ 		var cssChunks = {"components/uni-icons/uni-icons":1,"components/uni-popup/uni-popup":1,"components/axb-checkbox/axb-checkbox":1,"components/uni-tag/uni-tag":1,"myComponents/shopcart/shopcart":1,"components/uni-countdown/uni-countdown":1,"components/uni-transition/uni-transition":1,"components/axb-checkbox/axb-checkbox-item":1};
 /******/ 		if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);
 /******/ 		else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {
 /******/ 			promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {
-/******/ 				var href = "" + ({"components/uni-icons/uni-icons":"components/uni-icons/uni-icons","components/uni-popup/uni-popup":"components/uni-popup/uni-popup","components/axb-checkbox/axb-checkbox":"components/axb-checkbox/axb-checkbox","components/uni-tag/uni-tag":"components/uni-tag/uni-tag","myComponents/shopcart/shopcart":"myComponents/shopcart/shopcart","components/uni-transition/uni-transition":"components/uni-transition/uni-transition","components/axb-checkbox/axb-checkbox-item":"components/axb-checkbox/axb-checkbox-item"}[chunkId]||chunkId) + ".wxss";
+/******/ 				var href = "" + ({"components/uni-icons/uni-icons":"components/uni-icons/uni-icons","components/uni-popup/uni-popup":"components/uni-popup/uni-popup","components/axb-checkbox/axb-checkbox":"components/axb-checkbox/axb-checkbox","components/uni-tag/uni-tag":"components/uni-tag/uni-tag","myComponents/shopcart/shopcart":"myComponents/shopcart/shopcart","components/uni-countdown/uni-countdown":"components/uni-countdown/uni-countdown","components/uni-transition/uni-transition":"components/uni-transition/uni-transition","components/axb-checkbox/axb-checkbox-item":"components/axb-checkbox/axb-checkbox-item"}[chunkId]||chunkId) + ".wxss";
 /******/ 				var fullhref = __webpack_require__.p + href;
 /******/ 				var existingLinkTags = document.getElementsByTagName("link");
 /******/ 				for(var i = 0; i < existingLinkTags.length; i++) {
