@@ -96,7 +96,7 @@ var components = {
     return Promise.all(/*! import() | components/uni-icons/uni-icons */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-icons/uni-icons")]).then(__webpack_require__.bind(null, /*! @/components/uni-icons/uni-icons.vue */ 125))
   },
   uniTag: function() {
-    return __webpack_require__.e(/*! import() | components/uni-tag/uni-tag */ "components/uni-tag/uni-tag").then(__webpack_require__.bind(null, /*! @/components/uni-tag/uni-tag.vue */ 140))
+    return __webpack_require__.e(/*! import() | components/uni-tag/uni-tag */ "components/uni-tag/uni-tag").then(__webpack_require__.bind(null, /*! @/components/uni-tag/uni-tag.vue */ 133))
   }
 }
 var render = function() {
@@ -329,7 +329,7 @@ __webpack_require__.r(__webpack_exports__);
 var _cartcontrol = _interopRequireDefault(__webpack_require__(/*! @/myComponents/cartcontrol/cartcontrol.vue */ 25));
 
 
-var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js */ 32));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _createForOfIteratorHelper(o, allowArrayLike) {var it;if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {if (it) o = it;var i = 0;var F = function F() {};return { s: F, n: function n() {if (i >= o.length) return { done: true };return { done: false, value: o[i++] };}, e: function e(_e) {throw _e;}, f: F };}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var normalCompletion = true,didErr = false,err;return { s: function s() {it = o[Symbol.iterator]();}, n: function n() {var step = it.next();normalCompletion = step.done;return step;}, e: function e(_e2) {didErr = true;err = _e2;}, f: function f() {try {if (!normalCompletion && it.return != null) it.return();} finally {if (didErr) throw err;}} };}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(o);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}var uniPopup = function uniPopup() {Promise.all(/*! require.ensure | components/uni-popup/uni-popup */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-popup/uni-popup")]).then((function () {return resolve(__webpack_require__(/*! @/components/uni-popup/uni-popup.vue */ 116));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var shopcart = function shopcart() {__webpack_require__.e(/*! require.ensure | myComponents/shopcart/shopcart */ "myComponents/shopcart/shopcart").then((function () {return resolve(__webpack_require__(/*! @/myComponents/shopcart/shopcart.vue */ 133));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var uniTag = function uniTag() {__webpack_require__.e(/*! require.ensure | components/uni-tag/uni-tag */ "components/uni-tag/uni-tag").then((function () {return resolve(__webpack_require__(/*! @/components/uni-tag/uni-tag.vue */ 140));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var axbCheckBox = function axbCheckBox() {__webpack_require__.e(/*! require.ensure | components/axb-checkbox/axb-checkbox */ "components/axb-checkbox/axb-checkbox").then((function () {return resolve(__webpack_require__(/*! @/components/axb-checkbox/axb-checkbox.vue */ 147));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var _default =
+var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js */ 32));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _createForOfIteratorHelper(o, allowArrayLike) {var it;if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {if (it) o = it;var i = 0;var F = function F() {};return { s: F, n: function n() {if (i >= o.length) return { done: true };return { done: false, value: o[i++] };}, e: function e(_e) {throw _e;}, f: F };}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var normalCompletion = true,didErr = false,err;return { s: function s() {it = o[Symbol.iterator]();}, n: function n() {var step = it.next();normalCompletion = step.done;return step;}, e: function e(_e2) {didErr = true;err = _e2;}, f: function f() {try {if (!normalCompletion && it.return != null) it.return();} finally {if (didErr) throw err;}} };}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(o);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}var uniPopup = function uniPopup() {Promise.all(/*! require.ensure | components/uni-popup/uni-popup */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-popup/uni-popup")]).then((function () {return resolve(__webpack_require__(/*! @/components/uni-popup/uni-popup.vue */ 116));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var shopcart = function shopcart() {__webpack_require__.e(/*! require.ensure | myComponents/shopcart/shopcart */ "myComponents/shopcart/shopcart").then((function () {return resolve(__webpack_require__(/*! @/myComponents/shopcart/shopcart.vue */ 140));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var uniTag = function uniTag() {__webpack_require__.e(/*! require.ensure | components/uni-tag/uni-tag */ "components/uni-tag/uni-tag").then((function () {return resolve(__webpack_require__(/*! @/components/uni-tag/uni-tag.vue */ 133));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var axbCheckBox = function axbCheckBox() {__webpack_require__.e(/*! require.ensure | components/axb-checkbox/axb-checkbox */ "components/axb-checkbox/axb-checkbox").then((function () {return resolve(__webpack_require__(/*! @/components/axb-checkbox/axb-checkbox.vue */ 147));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var _default =
 {
   components: {
     uniPopup: uniPopup,
@@ -349,6 +349,7 @@ var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js 
       sizeCalcState: false,
 
       shopInfo: {},
+      orderConfig: {},
       scrollHeight: 400, //滚动区域高度
       scrollTopSize: 0,
       fillHeight: 0, // 填充高度，用于最后一项低于滚动区域时使用
@@ -480,6 +481,13 @@ var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js 
   methods: {
     changePeisongType: function changePeisongType() {
       this.order.type = this.order.type == 0 ? 1 : 0;
+      if (this.order.type) {
+        this.order.deliveryPrice = 0;
+      } else {
+        this.order.deliveryPrice = this.orderConfig.dgutshop_order_delivery;
+      }
+
+      this.computedOrderTotalPrice();
     },
     imageError: function imageError(e) {
       console.error('image发生error事件，携带值为' + e.detail.errMsg);
@@ -608,13 +616,16 @@ var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js 
         this.order.productPrice += this.order.orderItemList[i].productActualPrice;
       }
 
-      this.computedOrderDeliveryPrice();
+      this.order.deliveryPrice = Number(this.order.deliveryPrice);
       this.order.orderPrice = this.order.productPrice + this.order.deliveryPrice;
       console.log('计算订单总价');
       console.log(this.order);
     },
     computedOrderDeliveryPrice: function computedOrderDeliveryPrice() {
-      //TODO:计算派送费
+      if (this.order.type == '0') {
+        return this.orderConfig.dgutshop_order_delivery;
+      }
+      return 0;
 
     },
     clearShopCart: function clearShopCart() {
@@ -658,10 +669,21 @@ var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js 
       var that = this;
       if (!isLogin || isLogin == null) {
         uni.showToast({
-          title: '请登录' });
+          title: '请登录',
+          icon: 'loading' });
 
         uni.navigateTo({
           url: '../login/login' });
+
+        return;
+      }
+
+      var userStatus = uni.getStorageSync("userStatus");
+
+      if (userStatus == '1' || userStatus == '2') {
+        uni.showToast({
+          title: '无权限',
+          icon: 'none' });
 
         return;
       }
@@ -856,6 +878,7 @@ var _util = _interopRequireDefault(__webpack_require__(/*! ../../common/util.js 
 
     //获取商家信息
     this.shopInfo = uni.getStorageSync("shopInfo");
+    this.orderConfig = uni.getStorageSync("orderConfig");
 
 
 

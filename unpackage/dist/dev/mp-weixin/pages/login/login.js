@@ -164,9 +164,27 @@ var _default =
 
               success: function success(res) {
                 console.log("login success:", res);
+                uni.setStorageSync("userStatus", res.data.module.staus);
+                if (res.data.module.staus == '1') {
+                  uni.showToast({
+                    title: '禁止登陆！',
+                    icon: 'none' });
+
+                  setTimeout(function () {
+                    uni.switchTab({
+                      url: '/pages/index/index' });
+
+                  },
+                  2000);
+
+                  return;
+                }
+
+
                 uni.setStorageSync("token", res.data.module.token);
                 console.log("token", res.data.module.token);
                 uni.setStorageSync("isLogin", true);
+
                 uni.showToast({
                   title: '登陆成功' });
 

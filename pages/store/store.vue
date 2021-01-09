@@ -182,7 +182,7 @@
 
 
 		<shopcart class="shopcart" @delAll="clearShopCart" @dec="desOrderItemCount" @add="addOrderItemCount" @settle="settle"
-		 :order="order"></shopcart>
+		 :order="order" :shopInfo="shopInfo" :orderConfig="orderConfig"></shopcart>
 
 	</view>
 
@@ -213,6 +213,7 @@
 				sizeCalcState: false,
 
 				shopInfo: {},
+				orderConfig:{},
 				scrollHeight: 400, //滚动区域高度
 				scrollTopSize: 0,
 				fillHeight: 0, // 填充高度，用于最后一项低于滚动区域时使用
@@ -344,6 +345,13 @@
 		methods: {
 			changePeisongType() {
 				this.order.type = this.order.type == 0 ? 1 : 0;
+				if(this.order.type){
+					this.order.deliveryPrice=0
+				}else{
+					this.order.deliveryPrice=this.orderConfig.dgutshop_order_delivery
+				}
+				
+				this.computedOrderTotalPrice()
 			},
 			imageError: function(e) {
 				console.error('image发生error事件，携带值为' + e.detail.errMsg)
@@ -472,13 +480,16 @@
 					this.order.productPrice += this.order.orderItemList[i].productActualPrice
 				}
 
-				this.computedOrderDeliveryPrice()
+				this.order.deliveryPrice=Number(this.order.deliveryPrice)
 				this.order.orderPrice = this.order.productPrice + this.order.deliveryPrice
 				console.log('计算订单总价')
 				console.log(this.order)
 			},
 			computedOrderDeliveryPrice() {
-				//TODO:计算派送费
+				if(this.order.type=='0'){
+					return this.orderConfig.dgutshop_order_delivery
+				}
+				return 0
 
 			},
 			clearShopCart() {
@@ -523,10 +534,21 @@
 				if (!isLogin || isLogin == null) {
 					uni.showToast({
 						title: '请登录',
+						icon:'loading'
 					});
 					uni.navigateTo({
 						url: '../login/login'
 					})
+					return
+				}
+				
+				let userStatus=uni.getStorageSync("userStatus")
+				
+				if(userStatus=='1'||userStatus=='2'){
+					uni.showToast({
+						title: '无权限',
+						icon:'none'
+					});
 					return
 				}
 
@@ -720,6 +742,7 @@
 
 			//获取商家信息
 			this.shopInfo = uni.getStorageSync("shopInfo")
+			this.orderConfig=uni.getStorageSync("orderConfig")
 
 
 

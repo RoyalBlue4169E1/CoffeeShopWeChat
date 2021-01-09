@@ -32,16 +32,34 @@
 
 								success: function(res) {
 									console.log("login success:", res);
+									uni.setStorageSync("userStatus", res.data.module.staus)
+									if (res.data.module.staus == '1') {
+										uni.showToast({
+											title: '禁止登陆！',
+											icon:'none'
+										});
+										setTimeout(function() {
+												uni.switchTab({
+													url:'/pages/index/index'
+												})
+											},
+											2000
+										)
+										return
+									}
+
+
 									uni.setStorageSync("token", res.data.module.token)
 									console.log("token", res.data.module.token)
-									uni.setStorageSync("isLogin",true)
+									uni.setStorageSync("isLogin", true)
+
 									uni.showToast({
 										title: '登陆成功',
 									});
 
 									setTimeout(function() {
 											uni.navigateBack({
-											    delta: 1
+												delta: 1
 											});
 										},
 										1000
@@ -80,10 +98,11 @@
 </script>
 
 <style lang="scss">
-	page{
+	page {
 		width: 100%;
 		height: 100%;
 	}
+
 	.content {
 		width: 100%;
 		height: 100%;

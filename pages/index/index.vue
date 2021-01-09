@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="banner">
-			<image src="/static/index/壁纸.jpg" mode=aspectFill class="bg"></image>
+			<image :src="shopInfo.dgutshop_shop_poster" mode="widthFix" class="bg"></image>
 		</view>
 		<view class="content">
 			<view class="entrance">
@@ -27,7 +27,9 @@
 <script>
 	export default {
 		data() {
-			return {}
+			return {
+				shopInfo:{},
+			}
 		},
 		methods: {
 			takein() {
@@ -59,6 +61,16 @@
 				method: 'GET',
 				success: (res) => {
 					uni.setStorageSync('shopInfo', res.data.data)
+					this.shopInfo=res.data.data
+				}
+			})
+			
+			uni.request({
+				url: this.$apiUrl + '/wechat/config/order',
+				method: 'GET',
+				success: (res) => {
+					uni.setStorageSync('orderConfig', res.data.data)		
+					console.log('orderConfig',res)
 				}
 			})
 		}
@@ -77,11 +89,11 @@
 	.banner {
 		position: relative;
 		width: 100%;
-		height: 1000rpx;
+		// height: 1000rpx;
 
 		.bg {
 			width: 100%;
-			height: 1000rpx;
+			// max-height: 1000rpx;
 		}
 
 		.intro {

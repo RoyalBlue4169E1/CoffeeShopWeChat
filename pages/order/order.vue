@@ -307,6 +307,18 @@
 						return
 					}
 				}
+				
+				let userStatus=uni.getStorageSync("userStatus")
+				
+				if(userStatus=='1'||userStatus=='2'){
+					uni.showToast({
+						title: '无权限',
+						icon:'none'
+					});
+					return
+				}
+				
+				
 				uni.showModal({
 					title: '模拟支付',
 					content: '点击确认模拟支付',
@@ -330,8 +342,6 @@
 									that.getOrderData()
 								},
 							});
-
-
 						} else if (res.cancel) {
 
 						}

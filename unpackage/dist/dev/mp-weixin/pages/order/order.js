@@ -443,6 +443,18 @@ var _default = { data: function data() {return { mainHeight: 0, statusBarHeight:
           return;
         }
       }
+
+      var userStatus = uni.getStorageSync("userStatus");
+
+      if (userStatus == '1' || userStatus == '2') {
+        uni.showToast({
+          title: '无权限',
+          icon: 'none' });
+
+        return;
+      }
+
+
       uni.showModal({
         title: '模拟支付',
         content: '点击确认模拟支付',
@@ -465,8 +477,6 @@ var _default = { data: function data() {return { mainHeight: 0, statusBarHeight:
 
                 that.getOrderData();
               } });
-
-
 
           } else if (res.cancel) {
 

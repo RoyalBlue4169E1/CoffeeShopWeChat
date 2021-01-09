@@ -295,10 +295,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
 {
   components: {
     uniCountdown: uniCountdown },
@@ -307,7 +303,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       order: {},
       minues: '20',
-      second: '0' };
+      second: '0',
+      orderConfig: {} };
 
   },
   methods: {
@@ -446,36 +443,41 @@ __webpack_require__.r(__webpack_exports__);
     } },
 
   onShow: function onShow() {
+    this.orderConfig = uni.getStorageSync("orderConfig");
     this.order = uni.getStorageSync('orderDetail');
 
-    var dateStr = this.order.createTime.replace(/\-/g, "/");
-    var orderDate = new Date(dateStr); //date1就是一个日期类型了
-    // var currentDateStr=this.getCurrentTime().replace(/\-/g, "/")
-    var currentDate = new Date();
+    if (this.order.orderStatus == '101') {
+      var dateStr = this.order.createTime.replace(/\-/g, "/");
+      var orderDate = new Date(dateStr); //date1就是一个日期类型了
+      // var currentDateStr=this.getCurrentTime().replace(/\-/g, "/")
+      var currentDate = new Date();
 
-    console.log("当前时间：", currentDate);
-    console.log("订单时间：", orderDate);
+      console.log("当前时间：", currentDate);
+      console.log("订单时间：", orderDate);
 
-    var date3 = orderDate.getTime() - currentDate.getTime() + 30 * 60 * 1000 - 2000; //时间差秒
-    console.log(date3);
-    //计算出相差天数
-    var days = Math.floor(date3 / (24 * 3600 * 1000));
+      var date3 = orderDate.getTime() - currentDate.getTime() + Number(this.orderConfig.dgutshop_order_unpaid) * 60 * 1000 - 2000; //时间差秒
+      console.log(date3);
+      //计算出相差天数
+      var days = Math.floor(date3 / (24 * 3600 * 1000));
 
-    //计算出小时数
-    var leave1 = date3 % (24 * 3600 * 1000); //计算天数后剩余的毫秒数
-    var hours = Math.floor(leave1 / (3600 * 1000));
+      //计算出小时数
+      var leave1 = date3 % (24 * 3600 * 1000); //计算天数后剩余的毫秒数
+      var hours = Math.floor(leave1 / (3600 * 1000));
 
-    //计算相差分钟数
-    var leave2 = leave1 % (3600 * 1000); //计算小时数后剩余的毫秒数
-    var minutes = Math.floor(leave2 / (60 * 1000));
+      //计算相差分钟数
+      var leave2 = leave1 % (3600 * 1000); //计算小时数后剩余的毫秒数
+      var minutes = Math.floor(leave2 / (60 * 1000));
 
-    //计算相差秒数
-    var leave3 = leave2 % (60 * 1000); //计算分钟数后剩余的毫秒数
-    var seconds = Math.round(leave3 / 1000);
-    console.log("时间差" + days + "天" + hours + "时" + minutes + "分" + seconds + "秒");
+      //计算相差秒数
+      var leave3 = leave2 % (60 * 1000); //计算分钟数后剩余的毫秒数
+      var seconds = Math.round(leave3 / 1000);
+      console.log("时间差" + days + "天" + hours + "时" + minutes + "分" + seconds + "秒");
 
-    this.minues = minutes;
-    this.second = seconds;
+      this.minues = minutes;
+      this.second = seconds;
+    }
+
+
 
   },
   computed: {
@@ -485,6 +487,9 @@ __webpack_require__.r(__webpack_exports__);
         res += this.order.orderItemList[i].sum;
       }
       return res;
+    },
+    getTakeCode: function getTakeCode() {
+      return this.order.takeCode.substring(8);
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

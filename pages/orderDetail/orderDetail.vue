@@ -3,7 +3,7 @@
 
 		<view class="header" v-if="order.orderStatus=='101'">
 			<view class="title">订单未支付</view>
-			<uni-countdown :show-day="false"  :minute="minues" :second="second" @timeup="timeup"></uni-countdown>
+			<uni-countdown :show-day="false" :minute="minues" :second="second" @timeup="timeup"></uni-countdown>
 			<view class="text">
 				订单三十分钟未支付将自动取消
 			</view>
@@ -11,6 +11,7 @@
 
 		<view class="header" v-else-if="order.orderStatus=='201'">
 			<view class="title">订单制作中</view>
+			<view class="title" v-if="order.type=='1'">{{getTakeCode}}</view>
 			<view class="text">
 				饮品制作中，马上就来~
 			</view>
@@ -18,7 +19,7 @@
 
 		<view class="header" v-else-if="order.orderStatus=='301'&&order.type=='1'">
 			<view class="title">取餐码</view>
-			<view class="title">{{order.takeCode}}</view>
+			<view class="title">{{getTakeCode}}</view>
 			<view class="text">
 				尽快取餐味道更佳
 			</view>
@@ -36,14 +37,14 @@
 		<view class="header" v-else-if="order.orderStatus>'401'">
 			<view class="title">订单已完成</view>
 			<view class="text">
-				感谢您对喜茶的支持，欢迎再次光临
+				感谢您的支持，欢迎再次光临
 			</view>
 		</view>
 
 		<view class="header" v-else>
 			<view class="title">订单已取消</view>
 			<view class="text">
-				感谢您对喜茶的支持，欢迎再次光临
+				感谢您的支持，欢迎再次光临
 			</view>
 		</view>
 
@@ -131,12 +132,7 @@
 			</view>
 
 			<view class="row">
-				<view class="text">配送编号：</view>
-				<view class="value">{{order.deliveryCode}}</view>
-			</view>
-
-			<view class="row">
-				<view class="text">开始时间：</view>
+				<view class="text">配送时间：</view>
 				<view class="value">{{order.deliveryTime}}</view>
 			</view>
 
@@ -171,7 +167,8 @@
 			return {
 				order: {},
 				minues: '20',
-				second: '0'
+				second: '0',
+				orderConfig:{}
 			}
 		},
 		methods: {
@@ -305,41 +302,46 @@
 					}
 				});
 			},
-			timeup(){
-				this.order.orderStatus="103"
+			timeup() {
+				this.order.orderStatus = "103"
 			}
 		},
 		onShow() {
+			this.orderConfig=uni.getStorageSync("orderConfig")
 			this.order = uni.getStorageSync('orderDetail')
 
-			var dateStr = this.order.createTime.replace(/\-/g, "/");
-			var orderDate = new Date(dateStr); //date1就是一个日期类型了
-			// var currentDateStr=this.getCurrentTime().replace(/\-/g, "/")
-			var currentDate = new Date()
-			
-			console.log("当前时间：",currentDate)
-			console.log("订单时间：",orderDate)
+			if (this.order.orderStatus == '101') {
+				var dateStr = this.order.createTime.replace(/\-/g, "/");
+				var orderDate = new Date(dateStr); //date1就是一个日期类型了
+				// var currentDateStr=this.getCurrentTime().replace(/\-/g, "/")
+				var currentDate = new Date()
 
-			var date3 = orderDate.getTime() - currentDate.getTime() + 30*60*1000-2000; //时间差秒
-			console.log(date3)
-			//计算出相差天数
-			var days = Math.floor(date3 / (24 * 3600 * 1000))
+				console.log("当前时间：", currentDate)
+				console.log("订单时间：", orderDate)
 
-			//计算出小时数
-			var leave1 = date3 % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
-			var hours = Math.floor(leave1 / (3600 * 1000))
+				var date3 = orderDate.getTime() - currentDate.getTime() + Number(this.orderConfig.dgutshop_order_unpaid) * 60 * 1000 - 2000; //时间差秒
+				console.log(date3)
+				//计算出相差天数
+				var days = Math.floor(date3 / (24 * 3600 * 1000))
 
-			//计算相差分钟数
-			var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
-			var minutes = Math.floor(leave2 / (60 * 1000))
+				//计算出小时数
+				var leave1 = date3 % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+				var hours = Math.floor(leave1 / (3600 * 1000))
 
-			//计算相差秒数
-			var leave3 = leave2 % (60 * 1000) //计算分钟数后剩余的毫秒数
-			var seconds = Math.round(leave3 / 1000)
-			console.log("时间差" + days + "天" + hours + "时" + minutes + "分" + seconds + "秒");
+				//计算相差分钟数
+				var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+				var minutes = Math.floor(leave2 / (60 * 1000))
 
-			this.minues=minutes
-			this.second=seconds
+				//计算相差秒数
+				var leave3 = leave2 % (60 * 1000) //计算分钟数后剩余的毫秒数
+				var seconds = Math.round(leave3 / 1000)
+				console.log("时间差" + days + "天" + hours + "时" + minutes + "分" + seconds + "秒");
+
+				this.minues = minutes
+				this.second = seconds
+			}
+
+
 
 		},
 		computed: {
@@ -350,6 +352,9 @@
 				}
 				return res
 			},
+			getTakeCode(){
+				return this.order.takeCode.substring(8)
+			}
 		}
 	}
 </script>

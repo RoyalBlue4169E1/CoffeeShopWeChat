@@ -10,6 +10,14 @@
 			</view>
 			<view class="middle" @click.stop="toggleList">
 				<view class="price" :class="getAllCount ?　'active': ''">￥ {{getOrderTotalPrice}}</view>
+				<view class="delivery" v-if="order.type=='0'">
+					<view class="deliveryText">
+						配送费
+					</view>
+					<view class="deliveryPrice">
+						￥{{orderConfig.dgutshop_order_delivery}}
+					</view>
+				</view>
 			</view>
 			<view @click.stop="settle" class="BtnRight">
 				<!-- TODO:结算订单函数 -->
@@ -87,6 +95,12 @@
 		props: {
 			order: {
 				type: Object
+			},
+			shopInfo:{
+				type:Object
+			},
+			orderConfig:{
+				type:Object
 			}
 		},
 		data() {
@@ -357,8 +371,9 @@
 
 	.middle {
 		display: flex;
-		flex-direction: column;
-		justify-content: center;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
 		flex: 4;
 		font-size: 20px;
 		font-weight: 600;
@@ -366,6 +381,18 @@
 
 		.price {
 			color: #000000;
+		}
+		
+		.delivery{
+			display: flex;
+			flex-direction: row;
+			font-size: 14px;
+			margin-right: 7px;
+			font-weight: 400;
+			.deliveryText{
+				
+			}
+			.deliveryPrice{}
 		}
 	}
 

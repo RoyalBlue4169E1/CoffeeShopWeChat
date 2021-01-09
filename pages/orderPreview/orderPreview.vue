@@ -57,6 +57,15 @@
 				</view>
 			</view>
 
+			<view class="delivery" v-if="order.type=='0'">
+				<view class="text">
+					配送费
+				</view>
+				<view class="deliveryPrice">
+					￥{{orderConfig.dgutshop_order_delivery}}
+				</view>
+			</view>
+
 			<view class="mark">
 				<view class="text">
 					备注
@@ -98,7 +107,9 @@
 			return {
 				order: {},
 				shopInfo: {},
-				isSelectAddress: false
+				orderConfig: {},
+				isSelectAddress: false,
+				address: {}
 			}
 		},
 		methods: {
@@ -106,13 +117,32 @@
 				//修改订单派送类型
 				this.order.type = this.order.type == 0 ? 1 : 0;
 				if (this.order.type) {
-					this.addAddressInOrder()
-				} else {
 					this.order.consignee = ''
 					this.order.consigneePhone = ''
 					this.order.consigneeAddress = ''
 					this.order.consigneeRoom = ''
+					this.order.deliveryPrice = 0
+					this.order.orderPrice -= Number(this.orderConfig.dgutshop_order_delivery)
+				} else {
+					this.addAddressInOrder(this.address)
+					this.order.deliveryPrice = this.orderConfig.dgutshop_order_delivery
+					console.log('changePeisongType', this.order.deliveryPrice)
+					this.order.orderPrice += Number(this.orderConfig.dgutshop_order_delivery)
+
 				}
+			},
+			computedOrderTotalPrice() {
+				this.order.productPrice = 0
+				this.order.orderPrice = 0
+				let list = this.orderItemList
+				for (let i = 0; i < this.order.orderItemList.length; i++) {
+					this.order.productPrice += this.order.orderItemList[i].productActualPrice
+				}
+
+				this.order.deliveryPrice = Number(this.order.deliveryPrice)
+				this.order.orderPrice = this.order.productPrice + this.order.deliveryPrice
+				console.log('计算订单总价')
+				console.log(this.order)
 			},
 			changeAddress() {
 				//跳转到选择地址
@@ -126,6 +156,7 @@
 					address = uni.getStorageSync('defaultAddress')
 					if (address == null) return
 				} else {
+					this.address = address
 					this.order.consignee = address.userName
 					this.order.consigneePhone = address.userPhone
 					this.order.consigneeAddress = address.userAddress
@@ -230,12 +261,12 @@
 				s = s.toFixed(2) //保留两位小数
 				console.log('经纬度计算的距离:' + s)
 				return s
-			
+
 			},
-			computedDistance(address){
-				let shopInfo=uni.getStorageSync("shopInfo")
+			computedDistance(address) {
+				let shopInfo = uni.getStorageSync("shopInfo")
 				return this.getDistance(address.latitude, address.longitude, shopInfo.dgutshop_shop_latitude,
-							shopInfo.dgutshop_shop_longitude)
+					shopInfo.dgutshop_shop_longitude)
 			},
 			getDefaultAddress() {
 				let defaultAddress = uni.getStorageSync('defaultAddress')
@@ -250,7 +281,8 @@
 						},
 						success: (res) => {
 							for (let i = 0; i < res.data.data.list.length; i++) {
-								if (res.data.data.list[i].isDefault == '1'&&computedDistance(res.data.data.list[i])<15) this.addAddressInOrder(res.data.data.list[i])
+								if (res.data.data.list[i].isDefault == '1' && computedDistance(res.data.data.list[i]) < 15) this.addAddressInOrder(
+									res.data.data.list[i])
 							}
 						}
 					})
@@ -264,6 +296,7 @@
 			let selectedAddress = uni.getStorageSync('selectedAddress')
 			console.log(selectedAddress, 'selectedAddress')
 			if (selectedAddress != null) {
+				this.address = selectedAddress
 				this.addAddressInOrder(selectedAddress)
 			} else {
 				this.addAddressInOrder(uni.getStorageSync('defaultAddress'))
@@ -275,7 +308,10 @@
 					},
 					success: (res) => {
 						for (let i = 0; i < res.data.data.list.length; i++) {
-							if (res.data.data.list[i].isDefault == '1') this.addAddressInOrder(res.data.data.list[i])
+							if (res.data.data.list[i].isDefault == '1') {
+								this.address=res.data.data.list[i]
+								this.addAddressInOrder(res.data.data.list[i])
+							}
 						}
 					}
 				})
@@ -283,6 +319,8 @@
 
 
 			this.shopInfo = uni.getStorageSync('shopInfo')
+			this.orderConfig = uni.getStorageSync("orderConfig")
+			console.log("orderPreview_orderConfig", this.orderConfig)
 		},
 		computed: {
 			// 获得购物车所有商品数量
@@ -493,6 +531,20 @@
 				}
 
 			}
+		}
+
+		.delivery {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			border-bottom: #f0f0f0 solid 1rpx;
+
+			.text {}
+
+			.deliveryPrice {}
 		}
 
 		.mark {

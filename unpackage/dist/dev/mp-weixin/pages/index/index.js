@@ -164,7 +164,9 @@ __webpack_require__.r(__webpack_exports__);
 var _default =
 {
   data: function data() {
-    return {};
+    return {
+      shopInfo: {} };
+
   },
   methods: {
     takein: function takein() {
@@ -190,12 +192,22 @@ var _default =
 
     } },
 
-  onShow: function onShow() {
+  onShow: function onShow() {var _this = this;
     uni.request({
       url: this.$apiUrl + '/wechat/config/mall',
       method: 'GET',
       success: function success(res) {
         uni.setStorageSync('shopInfo', res.data.data);
+        _this.shopInfo = res.data.data;
+      } });
+
+
+    uni.request({
+      url: this.$apiUrl + '/wechat/config/order',
+      method: 'GET',
+      success: function success(res) {
+        uni.setStorageSync('orderConfig', res.data.data);
+        console.log('orderConfig', res);
       } });
 
   } };exports.default = _default;

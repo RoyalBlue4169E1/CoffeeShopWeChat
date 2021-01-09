@@ -225,6 +225,24 @@ page {
   font-size: 13px;
   color: #999999;
 }
+.orderDetail .delivery {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: #f0f0f0 solid 1rpx;
+}
 .orderDetail .mark {
   margin-top: 25px;
   margin-bottom: 25px;
